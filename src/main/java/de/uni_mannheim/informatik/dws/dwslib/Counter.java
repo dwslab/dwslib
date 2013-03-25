@@ -35,6 +35,12 @@ public class Counter{
 		}
 	}
 	
+	public void add(Object o) {
+		if (map.containsKey(o)) {
+			map.put(o, map.get(o) + 1);
+		} else {map.put(o, 1);}
+	}
+	
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public LinkedHashMap<Object,Integer> mostCommon() {
 		LinkedHashMap<Object, Integer> orderedMap = new LinkedHashMap<Object, Integer>();
