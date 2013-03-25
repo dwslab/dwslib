@@ -8,6 +8,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Vector;
 
 public class Counter{
@@ -63,7 +64,12 @@ public class Counter{
 	
 	@Override
 	public String toString() {
-		return mostCommon().toString();
+		LinkedHashMap<Object, Integer> map = mostCommon();
+		StringBuffer bf = new StringBuffer();
+		for (Entry<Object, Integer> e: map.entrySet()) {
+			bf.append(e.getKey()+" ("+e.getValue()+"), ");
+		}
+		return bf.toString();
 	}
 
 	public static void main(String[] args) {
