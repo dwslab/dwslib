@@ -1,5 +1,6 @@
 package de.uni_mannheim.informatik.dws.dwslib;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -9,7 +10,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-import java.util.Vector;
 
 public class Counter{
 
@@ -73,7 +73,7 @@ public class Counter{
 	}
 
 	public static void main(String[] args) {
-		Vector<String> v = new Vector<String>();
+		ArrayList<String> v = new ArrayList<String>();
 		v.add("String");
 		v.add("Micha");
 		v.add("Micha");
