@@ -23,14 +23,20 @@ public class LodURI {
 		int k = Math.max(j, fullURI.lastIndexOf(":"));
 		if (k <= 4)
 			return fullURI;
-		return prefixMap.get(fullURI.substring(0, k+1))+fullURI.substring(k+1);
+		String prefix = prefixMap.get(fullURI.substring(0, k+1));
+		if (prefix == null) 
+			return fullURI;
+		return prefix+fullURI.substring(k+1);
 	}
 	
 	public String toFullUri(String prefixedURI) {
 		int i = prefixedURI.indexOf(":");
 		if (i <= 1)
 			return prefixedURI;
-		return uriMap.get(prefixedURI.substring(0, i))+prefixedURI.substring(i+1);	
+		String fullUri = uriMap.get(prefixedURI.substring(0, i));
+		if (fullUri == null)
+			return prefixedURI;
+		return fullUri+prefixedURI.substring(i+1);	
 	}
 	
 	private LodURI(String uriList) {
