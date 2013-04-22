@@ -1,7 +1,6 @@
 package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
 import au.com.bytecode.opencsv.CSVWriter;
-import de.uni_mannheim.informatik.dws.dwslib.LodURI;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -25,20 +24,23 @@ public class Query {
         String password = args[2];
         String outfile = args[3];
         String query = "sparql " + args[4];
-        URIShortener shortener = new URIShortener.DummyShortener();
+        boolean shorten = false;
         if (args.length == 6 && args[5].equals("shorten")) {
-            shortener = new URIShortener.LODShortener();
+            shorten = true;
         }
         long startTime = System.currentTimeMillis();
 
-        sparqlQuery(server, user, password, outfile, query, shortener);
+        sparqlQuery(server, user, password, outfile, query, shorten);
 
         System.out.printf("Total runtime: %d secs\n", (System.currentTimeMillis() - startTime) / 1000);
     }
 
-    private static void sparqlQuery(String server, String user, String password, String outfile, String query,
-                                    URIShortener shortener)
+    public static void sparqlQuery(String server, String user, String password, String outfile, String query,
+                                    boolean shorten)
             throws SQLException, IOException {
+    	
+    	URIShortener shortener = 
+    			shorten ? new URIShortener.LODShortener() : new URIShortener.DummyShortener();
 
         DriverManager.registerDriver(new virtuoso.jdbc4.Driver());
         Connection conn = DriverManager
@@ -69,27 +71,21 @@ public class Query {
         writer.close();
     }
 
-    /**
-    *
-    */
-    abstract static class URIShortener {
+
+    private abstract static class URIShortener {
         public abstract String shorten(String uri);
 
-        /**
-         *
-         */
-        public static class LODShortener extends URIShortener {
+
+        private static class LODShortener extends URIShortener {
             private LodURI lodUri = LodURI.getInstance();
             @Override
             public String shorten(String uri) {
-                return lodUri.toPrefixedUri(uri);  //To change body of implemented methods use File | Settings | File Templates.
+                return lodUri.toPrefixedUri(uri); 
             }
         }
 
-        /**
-         *
-         */
-        public static class DummyShortener extends URIShortener {
+
+        private static class DummyShortener extends URIShortener {
             @Override
             public String shorten(String uri) {
                 return uri;

@@ -1,4 +1,4 @@
-package de.uni_mannheim.informatik.dws.dwslib;
+package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,8 @@ import java.util.HashMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import de.uni_mannheim.informatik.dws.dwslib.MyFileReader;
 
 public class LodURI {
 	
