@@ -20,25 +20,35 @@ public class LodURI {
 	public static HashMap<String, String> uriMap = null;
 	
 	public String toPrefixedUri(String fullURI) {
-		int i = fullURI.lastIndexOf("/");
-		int j = Math.max(i, fullURI.lastIndexOf("#"));
-		int k = Math.max(j, fullURI.lastIndexOf(":"));
-		if (k <= 4)
+		try {
+			int i = fullURI.lastIndexOf("/");
+			int j = Math.max(i, fullURI.lastIndexOf("#"));
+			int k = Math.max(j, fullURI.lastIndexOf(":"));
+			if (k <= 4)
+				return fullURI;
+			String prefix = prefixMap.get(fullURI.substring(0, k+1));
+			if (prefix == null) 
+				return fullURI;
+			return prefix+fullURI.substring(k+1);
+		} catch (Exception e) {
+			log.debug(e.toString());
 			return fullURI;
-		String prefix = prefixMap.get(fullURI.substring(0, k+1));
-		if (prefix == null) 
-			return fullURI;
-		return prefix+fullURI.substring(k+1);
+		}
 	}
 	
 	public String toFullUri(String prefixedURI) {
-		int i = prefixedURI.indexOf(":");
-		if (i <= 1)
+		try {
+			int i = prefixedURI.indexOf(":");
+			if (i <= 1)
+				return prefixedURI;
+			String fullUri = uriMap.get(prefixedURI.substring(0, i));
+			if (fullUri == null)
+				return prefixedURI;
+			return fullUri+prefixedURI.substring(i+1);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return prefixedURI;
-		String fullUri = uriMap.get(prefixedURI.substring(0, i));
-		if (fullUri == null)
-			return prefixedURI;
-		return fullUri+prefixedURI.substring(i+1);	
+		}	
 	}
 	
 	private LodURI(String uriList) {
