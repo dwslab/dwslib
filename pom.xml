@@ -6,8 +6,18 @@
     <artifactId>dwslib</artifactId>
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
-    <name>Another DWS Maven Project</name>
+    <name>dwslib - DWS Java Library</name>
     <url>http://dws.informatik.uni-mannheim.de</url>
+
+    <developers>
+        <developer>
+            <name>Michael Schuhmacher</name>
+        </developer>
+        <developer>
+            <name>Daniel Fleischhacker</name>
+        </developer>
+    </developers>
+
     <build>
         <plugins>
             <plugin>
@@ -41,7 +51,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.uni_mannheim.informatik.dws.dwslib.Starter</mainClass>
+                            <mainClass>de.uni_mannheim.informatik.dws.dwslib.virtuoso.Query</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
@@ -52,7 +62,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.uni_mannheim.informatik.dws.dwslib.Starter</mainClass>
+                            <mainClass>de.uni_mannheim.informatik.dws.dwslib.virtuoso.Query</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
