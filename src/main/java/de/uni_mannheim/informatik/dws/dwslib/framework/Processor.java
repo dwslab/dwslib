@@ -17,19 +17,26 @@ import java.util.logging.Logger;
  * 
  */
 public abstract class Processor<E> {
-	
+
 	private int threads;
 	private static Logger log;
 	private List<E> objectToProcess;
 
 	public Processor(int threads) {
-		if (threads < 1){
-			System.out.println("Number of threads will be set to number of avaible processors.");
+		if (threads < 1) {
+			System.out
+					.println("Number of threads will be set to number of avaible processors.");
 			this.threads = Runtime.getRuntime().availableProcessors();
-		}else{
+		} else {
 			this.threads = threads;
 		}
-		log = Logger.getLogger(getClass().getEnclosingClass().getSimpleName());
+		try {
+			log = Logger.getLogger(getClass().getEnclosingClass()
+					.getSimpleName());
+		} catch (NullPointerException ne) {
+			System.out.println("Could not obtain class name");
+			log = Logger.getLogger("Processor.java");
+		}
 	}
 
 	/**
@@ -56,19 +63,19 @@ public abstract class Processor<E> {
 
 		return total - finished;
 	}
-	
+
 	protected abstract List<E> fillListToProcess();
-	
+
 	public void process() throws FileNotFoundException, IOException {
 		long startTime = new Date().getTime();
 		log.log(Level.INFO, new Date() + " " + "Starting.");
-		
+
 		objectToProcess = fillListToProcess();
-		
+
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(threads);
 		for (E object : objectToProcess) {
-				executor.submit(new Worker(object, this));
+			executor.submit(new Worker(object, this));
 		}
 		long stillTodo = printState(executor, startTime);
 		while (stillTodo != 0) {
@@ -83,21 +90,22 @@ public abstract class Processor<E> {
 		executor.shutdown();
 		log.log(Level.INFO, new Date() + " " + "Done.");
 	}
-	
+
 	private class Worker<E> implements Runnable {
 		private E object;
 		private Processor p;
-		
+
 		public Worker(E object, Processor p) {
 			this.object = object;
 			this.p = p;
 		}
-		public void run(){
+
+		public void run() {
 			p.process(object);
 		}
-		
+
 	}
-	
-	 protected abstract void process(E object);
+
+	protected abstract void process(E object);
 
 }
