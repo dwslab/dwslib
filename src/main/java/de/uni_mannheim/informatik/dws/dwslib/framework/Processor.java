@@ -98,6 +98,6 @@ public abstract class Processor<E> {
 		
 	}
 	
-	 public abstract void process(E object);
+	 protected abstract void process(E object);
 
 }
