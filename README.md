@@ -14,10 +14,10 @@ Util
 * Tuple:
 
 Virtuoso:
-* LoadURI:
-* Query:
+* LoadURI: URI Shortener (both ways) based on prefix.cc list
+* Query: Virtuoso Sparql Query Processor based on direct JDBC driver (not http sparql endpoint -> no 1mio line limit)
 
 Others:
 * Collection:
-* Counter:
-* MyFileReader:
+* Counter: Counter for abitrary objects (python counter like)
+* MyFileReader: utf-8 file reader line-by-line; utf-8 tab (or any other character) separated file reader
