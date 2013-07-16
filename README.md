@@ -18,6 +18,6 @@ Virtuoso:
 * Query: Virtuoso Sparql Query Processor based on direct JDBC driver (not http sparql endpoint -> no 1mio line limit)
 
 Others:
-* Collection:
+* Collection: collection helper methods (sortHashMapByValue, ...)
 * Counter: Counter for abitrary objects (python counter like)
 * MyFileReader: utf-8 file reader line-by-line; utf-8 tab (or any other character) separated file reader
