@@ -45,6 +45,7 @@ and include it in your project's dependencies.
 * DomainUtil: Collection of often used functionalities to process URLs (e.g. get PLD, Domain, Compress based on CC)
 * InputUtil: Collection of often used functionalities to read input files (e.g. get all files in a directory, get input stream for file)
 * Tuple: Generic class for representing ordered pairs of data
+* FileUtil: Collection of often used functionalities to handle files.
 
 ### Virtuoso:
 * LoadURI: URI Shortener (both ways) based on prefix.cc list
