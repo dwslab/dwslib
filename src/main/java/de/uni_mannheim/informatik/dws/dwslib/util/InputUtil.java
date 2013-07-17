@@ -6,8 +6,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.SequenceInputStream;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
 
@@ -53,7 +57,8 @@ public class InputUtil {
 	 * @param fileOrDir
 	 *            the name of a file or directory.
 	 * @return A {@link List} of all {@link File}s
-	 * @throws IOException if the file could not be processed/read.
+	 * @throws IOException
+	 *             if the file could not be processed/read.
 	 * @throws FileNotFoundExceptione
 	 *             if input file/directory does not exist.
 	 */
@@ -112,5 +117,23 @@ public class InputUtil {
 
 		return br;
 	}
-}
 
+	public static BufferedReader getBufferedReader(Collection<File> files)throws IOException{
+		List<InputStream> streamsToProcess = new ArrayList<InputStream>(
+				files.size());
+		for (File f : files) {
+			// distinguish inflated and deflated input files
+			if (f.getName().endsWith(".gz")) {
+				// always add a the last position
+				streamsToProcess.add(streamsToProcess.size(),
+						new GZIPInputStream(new FileInputStream(f)));
+			} else {
+				// always add a the last position
+				streamsToProcess.add(streamsToProcess.size(),
+						new FileInputStream(f));
+			}
+		}
+		return new BufferedReader(new InputStreamReader(new SequenceInputStream(
+				Collections.enumeration(streamsToProcess))));
+	}
+}
