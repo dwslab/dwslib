@@ -34,8 +34,13 @@ public class Query {
 
         System.out.printf("Total runtime: %d secs\n", (System.currentTimeMillis() - startTime) / 1000);
     }
-
+    
     public static void sparqlQuery(String server, String user, String password, String outfile, String query,
+            boolean shorten) throws SQLException, IOException {
+    	query(server, user, password, outfile, "sparql " + query, shorten);
+    }
+
+    public static void query(String server, String user, String password, String outfile, String query,
                                     boolean shorten)
             throws SQLException, IOException {
     	
@@ -72,12 +77,12 @@ public class Query {
     }
 
 
-    private abstract static class URIShortener {
+    public abstract static class URIShortener {
         public abstract String shorten(String uri);
 
 
-        private static class LODShortener extends URIShortener {
-            private LodURI lodUri = LodURI.getInstance();
+        public static class LODShortener extends URIShortener {
+        	public LodURI lodUri = LodURI.getInstance();
             @Override
             public String shorten(String uri) {
                 return lodUri.toPrefixedUri(uri); 
@@ -85,7 +90,7 @@ public class Query {
         }
 
 
-        private static class DummyShortener extends URIShortener {
+        public static class DummyShortener extends URIShortener {
             @Override
             public String shorten(String uri) {
                 return uri;
