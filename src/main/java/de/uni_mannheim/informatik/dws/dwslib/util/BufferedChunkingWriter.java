@@ -77,7 +77,8 @@ public class BufferedChunkingWriter {
 	 *             If the old stream could not be closed.
 	 */
 	public void write(String input) throws FileNotFoundException, IOException {
-		if (currentOutputFile.length() > maxFileSize) {
+		if (currentOutputFile == null
+				|| currentOutputFile.length() > maxFileSize) {
 			switchChunk();
 		}
 		currentWriter.write(input);
