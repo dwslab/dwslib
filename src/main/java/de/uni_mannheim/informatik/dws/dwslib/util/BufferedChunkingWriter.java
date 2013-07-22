@@ -38,7 +38,7 @@ public class BufferedChunkingWriter {
 	 * @param outputDir
 	 *            the directory where to write the output files.
 	 * @param nameScheme
-	 *            the prefix-namescheme ot be used.
+	 *            the prefix-namescheme to be used.
 	 * @param maxFileSize
 	 *            the maximal size of the output file in MB. Will internally by
 	 *            converted to Bytes (*1024*1024).
@@ -63,21 +63,21 @@ public class BufferedChunkingWriter {
 	}
 
 	/**
-	 * Initializes the writer (default GZIP). Please not that at this point no file or writer
-	 * is initialized internally. This will be done at the first time
-	 * {@link #write(String)} is called.
+	 * Initializes the writer (default GZIP). Please not that at this point no
+	 * file or writer is initialized internally. This will be done at the first
+	 * time {@link #write(String)} is called.
 	 * 
 	 * @param outputDir
 	 *            the directory where to write the output files.
 	 * @param nameScheme
-	 *            the prefix-namescheme ot be used.
+	 *            the prefix-namescheme to be used.
 	 * @param maxFileSize
 	 *            the maximal size of the output file in MB. Will internally by
 	 *            converted to Bytes (*1024*1024).
 	 */
 	public BufferedChunkingWriter(File outputDir, String nameScheme,
 			int maxFileSize) {
-		new BufferedChunkingWriter(outputDir, nameScheme, maxFileSize,
+		this(outputDir, nameScheme, maxFileSize,
 				OutputType.GZIP);
 	}
 
@@ -118,15 +118,17 @@ public class BufferedChunkingWriter {
 				e.printStackTrace();
 			}
 		}
-		if (outputType == OutputType.GZIP){
-		currentOutputFile = new File(outputDir, nameScheme + "-"
-				+ String.format("%05d", nextChunk++) + ".gz");
-		currentWriter = new BufferedWriter(new OutputStreamWriter(
-				new GZIPOutputStream(new FileOutputStream(currentOutputFile))));
-		}else if(outputType == OutputType.PLAIN){
+		if (outputType == OutputType.GZIP) {
+			currentOutputFile = new File(outputDir, nameScheme + "-"
+					+ String.format("%05d", nextChunk++) + ".gz");
+			currentWriter = new BufferedWriter(new OutputStreamWriter(
+					new GZIPOutputStream(
+							new FileOutputStream(currentOutputFile))));
+		} else if (outputType == OutputType.PLAIN) {
 			currentOutputFile = new File(outputDir, nameScheme + "-"
 					+ String.format("%05d", nextChunk++));
-			currentWriter = new BufferedWriter(new FileWriter(currentOutputFile));
+			currentWriter = new BufferedWriter(
+					new FileWriter(currentOutputFile));
 		}
 	}
 }
