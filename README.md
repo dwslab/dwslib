@@ -46,6 +46,7 @@ and include it in your project's dependencies.
 * InputUtil: Collection of often used functionalities to read input files (e.g. get all files in a directory, get input stream for file)
 * Tuple: Generic class for representing ordered pairs of data
 * FileUtil: Collection of often used functionalities to handle files.
+* BufferedChunkingWriter: A BufferedWriter (Using GZIPOutputStream) taking care of chunking the output in multiple files.
 
 ### Virtuoso:
 * LoadURI: URI Shortener (both ways) based on prefix.cc list
