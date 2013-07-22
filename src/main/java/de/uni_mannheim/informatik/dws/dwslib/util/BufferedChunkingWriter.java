@@ -93,7 +93,7 @@ public class BufferedChunkingWriter {
 			}
 		}
 		currentOutputFile = new File(outputDir, nameScheme + "-"
-				+ String.format("%05d", nextChunk++));
+				+ String.format("%05d", nextChunk++) + ".gz");
 		currentWriter = new BufferedWriter(new OutputStreamWriter(
 				new GZIPOutputStream(new FileOutputStream(currentOutputFile))));
 	}
