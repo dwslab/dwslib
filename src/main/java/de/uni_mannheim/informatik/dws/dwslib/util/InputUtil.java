@@ -124,21 +124,21 @@ public class InputUtil {
 	 * 
 	 * @param File
 	 *            which should be read
-	 * @param cs
-	 *            the {@link Charset} which should be used
+	 * @param encoding
+	 *            the encoding to be used
 	 * @return {@link BufferedReader}
 	 * @throws IOException
 	 *             If file was not found or Stream could not be opened.
 	 */
-	public static BufferedReader getBufferedReader(File f, Charset cs)
+	public static BufferedReader getBufferedReader(File f, String encoding)
 			throws IOException {
 		BufferedReader br;
 		if (f.getName().endsWith("gz")) {
 			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
-					new FileInputStream(f)), cs));
+					new FileInputStream(f)), encoding));
 		} else {
 			br = new BufferedReader(new InputStreamReader(
-					new FileInputStream(f), cs));
+					new FileInputStream(f), encoding));
 		}
 
 		return br;
