@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.SequenceInputStream;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -118,7 +119,33 @@ public class InputUtil {
 		return br;
 	}
 
-	public static BufferedReader getBufferedReader(Collection<File> files)throws IOException{
+	/**
+	 * Returns the most likely fitting {@link BufferedReader} for a given file.
+	 * 
+	 * @param File
+	 *            which should be read
+	 * @param cs
+	 *            the {@link Charset} which should be used
+	 * @return {@link BufferedReader}
+	 * @throws IOException
+	 *             If file was not found or Stream could not be opened.
+	 */
+	public static BufferedReader getBufferedReader(File f, Charset cs)
+			throws IOException {
+		BufferedReader br;
+		if (f.getName().endsWith("gz")) {
+			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
+					new FileInputStream(f)), cs));
+		} else {
+			br = new BufferedReader(new InputStreamReader(
+					new FileInputStream(f), cs));
+		}
+
+		return br;
+	}
+
+	public static BufferedReader getBufferedReader(Collection<File> files)
+			throws IOException {
 		List<InputStream> streamsToProcess = new ArrayList<InputStream>(
 				files.size());
 		for (File f : files) {
@@ -133,7 +160,8 @@ public class InputUtil {
 						new FileInputStream(f));
 			}
 		}
-		return new BufferedReader(new InputStreamReader(new SequenceInputStream(
-				Collections.enumeration(streamsToProcess))));
+		return new BufferedReader(new InputStreamReader(
+				new SequenceInputStream(
+						Collections.enumeration(streamsToProcess))));
 	}
 }
