@@ -1,13 +1,13 @@
 package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.HashMap;
-
+import de.uni_mannheim.informatik.dws.dwslib.MyFileReader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.uni_mannheim.informatik.dws.dwslib.MyFileReader;
+import java.io.File;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class LodURI {
 	
@@ -50,20 +50,32 @@ public class LodURI {
 			return prefixedURI;
 		}	
 	}
-	
-	private LodURI(String uriList) {
-		f = new File(uriList);
-		prefixMap = new HashMap<String, String>();
-		uriMap = new HashMap<String, String>();
-		for (ArrayList<String> line : MyFileReader.readXSVFile(f, "\t", false)) {
-			prefixMap.put(line.get(1).trim(), line.get(0).trim() + ":");
-			uriMap.put(line.get(0).trim(), line.get(1).trim());
-		}
-		log.debug("PrefixCC mappings loaded from file {}", f.getName());
-	}
-	
-	
-	public static LodURI getInstance(String uriList) {
+
+
+    private LodURI(String uriList) {
+        f = new File(uriList);
+        prefixMap = new HashMap<String, String>();
+        uriMap = new HashMap<String, String>();
+        for (ArrayList<String> line : MyFileReader.readXSVFile(f, "\t", false)) {
+            prefixMap.put(line.get(1).trim(), line.get(0).trim() + ":");
+            uriMap.put(line.get(0).trim(), line.get(1).trim());
+        }
+        log.debug("PrefixCC mappings loaded from file {}", f.getName());
+    }
+
+	private LodURI() {
+        InputStream in = this.getClass().getResourceAsStream("/prefixcc-20130404.tab");
+        prefixMap = new HashMap<String, String>();
+        uriMap = new HashMap<String, String>();
+        for (ArrayList<String> line : MyFileReader.readXSVFile(in, "\t", false)) {
+            prefixMap.put(line.get(1).trim(), line.get(0).trim() + ":");
+            uriMap.put(line.get(0).trim(), line.get(1).trim());
+        }
+        log.debug("PrefixCC mappings loaded from file prefixcc-20130404.tab");
+    }
+
+
+    public static LodURI getInstance(String uriList) {
 		if (instance == null)
 			instance = new LodURI(uriList);
 		return instance;
@@ -71,7 +83,7 @@ public class LodURI {
 	
 	public static LodURI getInstance() {
 		if (instance == null)
-			instance = new LodURI("src/main/resources/prefixcc-20130404.tab");
+			instance = new LodURI();
 		return instance;
 	}
 
