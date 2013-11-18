@@ -63,10 +63,10 @@ public class Query {
      */
     public void setShortening(boolean shorten) {
         if (shorten) {
-            this.shortener = new URIShortener.DummyShortener();
+            this.shortener = new URIShortener.LODShortener();
         }
         else {
-            this.shortener = new URIShortener.LODShortener();
+            this.shortener = new URIShortener.DummyShortener();
         }
     }
 
