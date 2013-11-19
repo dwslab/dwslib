@@ -32,7 +32,9 @@ public class Query {
 
     /**
      * Initialize the connection to the given Virtuoso instance using the provided authentication
-     * data and activate IRI shortening if <code>shorten</code> is set to true.
+     * data and activate IRI shortening if <code>shorten</code> is set to true. The charset
+     * for the created JDBC connection is UTF-8. This default can be influenced by using the alternative
+     * constructor {@link #Query(String, String, String, boolean, String)}.
      *
      * @param server   server address to connect to
      * @param user     username to connect to server
@@ -41,10 +43,27 @@ public class Query {
      * @throws java.sql.SQLException on an error initializing the connection to the server
      */
     public Query(String server, String user, String password, boolean shorten) throws SQLException {
+        this(server, user, password, shorten, "UTF-8");
+    }
+
+    /**
+     * Initialize the connection to the given Virtuoso instance using the provided authentication
+     * data and activate IRI shortening if <code>shorten</code> is set to true.
+     *
+     *
+     * @param server   server address to connect to
+     * @param user     username to connect to server
+     * @param password password to connect to server
+     * @param shorten  true if IRIs in result should be shortened, otherwise false
+     * @param charset  charset to set JDBC connection to
+     * @throws java.sql.SQLException on an error initializing the connection to the server
+     */
+    public Query(String server, String user, String password, boolean shorten, String charset) throws SQLException {
         this.shortener = shorten ? new URIShortener.LODShortener() : new URIShortener.DummyShortener();
         DriverManager.registerDriver(new virtuoso.jdbc4.Driver());
         this.conn = DriverManager
-                .getConnection(String.format("jdbc:virtuoso://%s/UID=%s/PWD=%s/", server, user, password));
+                .getConnection(
+                        String.format("jdbc:virtuoso://%s/UID=%s/PWD=%s/charset=%s/", server, user, password, charset));
     }
 
     /**
