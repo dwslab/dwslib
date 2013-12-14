@@ -1,10 +1,8 @@
 package de.uni_mannheim.informatik.dws.dwslib.stats;
 
-import de.uni_mannheim.informatik.dws.dwslib.stats.distributions.DiscreteDistribution;
-import de.uni_mannheim.informatik.dws.dwslib.stats.distributions.DiscreteSampleDistribution;
+import de.uni_mannheim.informatik.dws.dwslib.stats.distributions.DoubleBucketedDiscreteDistribution;
 
 import java.util.Arrays;
-import java.util.TreeSet;
 
 /**
  * Implements the computation of divergence measures like the Kullback Leibler divergence.
@@ -25,16 +23,15 @@ public class Divergence {
      * @param q the other distribution
      * @return Kullback Leibler divergence between the two given distributions in Bit resp. Shannon
      */
-    public static <T extends Comparable<T>> double getKLDivergence(DiscreteDistribution<T> p,
-                                                                   DiscreteDistribution<T> q) {
-
-        TreeSet<T> joinedRanges = new TreeSet<T>(p.getValueRange());
-        joinedRanges.addAll(q.getValueRange());
-
+    public static <T extends Comparable<T>> double getKLDivergence(DoubleBucketedDiscreteDistribution p,
+                                                                   DoubleBucketedDiscreteDistribution q) {
+        if (p.getNumberOfBuckets() != q.getNumberOfBuckets()) {
+            throw new IllegalArgumentException("Given distributions must both have the same number of buckets");
+        }
         double sum = 0;
-        for (T val : joinedRanges) {
-            double probP = p.getSmoothedProbability(val, 1);
-            double probQ = q.getSmoothedProbability(val, 1);
+        for (int i = 0; i < p.getNumberOfBuckets(); i++) {
+            double probP = p.getSmoothedProbability(i);
+            double probQ = q.getSmoothedProbability(i);
 
             sum += log2(probP / probQ) * probP;
         }
@@ -48,8 +45,8 @@ public class Divergence {
      *
      * @
      */
-    public static <T extends Comparable<T>> double getSymmetricKLDivergence(DiscreteDistribution<T> p,
-                                                                            DiscreteDistribution<T> q) {
+    public static <T extends Comparable<T>> double getSymmetricKLDivergence(DoubleBucketedDiscreteDistribution p,
+                                                                            DoubleBucketedDiscreteDistribution q) {
         return getKLDivergence(p, q) + getKLDivergence(q, p);
     }
 
@@ -64,11 +61,11 @@ public class Divergence {
         return Math.log(x) / VALUE_LOG2;
     }
 
-    public static void main(String[] args) {
-        DiscreteSampleDistribution<Integer> d1 = new DiscreteSampleDistribution<Integer>(
-                Arrays.asList(1, 2, 3, 4, 5, 6, 7));
-        DiscreteSampleDistribution<Integer> d2 = new DiscreteSampleDistribution<Integer>(
-                Arrays.asList(99999999));
+    public static void main(String[] args) throws Exception {
+        DoubleBucketedDiscreteDistribution d1 = new DoubleBucketedDiscreteDistribution(
+                Arrays.asList(1d, 2d, 3d, 4d, 5d, 6d, 7d), 10);
+        DoubleBucketedDiscreteDistribution d2 = new DoubleBucketedDiscreteDistribution(
+                Arrays.asList(99999999d), 10);
         System.out.println(getKLDivergence(d1, d2));
 
     }
