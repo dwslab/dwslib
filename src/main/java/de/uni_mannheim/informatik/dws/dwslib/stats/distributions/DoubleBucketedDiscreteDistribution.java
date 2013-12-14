@@ -102,7 +102,7 @@ public class DoubleBucketedDiscreteDistribution extends DiscreteDistribution<Dou
         }
         for (Double current : buckets.navigableKeySet()) {
             if (value < current + bucketSize) {
-                return buckets.get(current) / ((double) totalNum + buckets.size());
+                return (1 + buckets.get(current)) / ((double) totalNum + buckets.size());
             }
         }
 
