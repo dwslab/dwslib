@@ -5,7 +5,7 @@ package de.uni_mannheim.informatik.dws.dwslib.util;
  * methods and thus is safe to use with mutable element values.
  *
  * @author Daniel Fleischhacker
- * @version 1.0
+ * @version 1.1 (Michael)
  */
 public class Tuple<T, S> {
     private T firstElement;
@@ -64,4 +64,11 @@ public class Tuple<T, S> {
         result = 31 * result + (secondElement != null ? secondElement.hashCode() : 0);
         return result;
     }
+
+	@Override
+	public String toString() {
+		return "Tuple <" + firstElement + ", " + secondElement + ">";
+	}
+    
+    
 }
