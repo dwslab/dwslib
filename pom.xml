@@ -19,6 +19,12 @@
         <developer>
             <name>Robert Meusel</name>
         </developer>
+        <developer>
+            <name>Oliver Lehmberg</name>
+        </developer>
+        <developer>
+            <name>Bernhard Schäfer</name>
+        </developer>
     </developers>
 
     <build>
