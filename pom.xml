@@ -19,6 +19,12 @@
         <developer>
             <name>Robert Meusel</name>
         </developer>
+        <developer>
+            <name>Oliver Lehmberg</name>
+        </developer>
+        <developer>
+            <name>Bernhard Schäfer</name>
+        </developer>
     </developers>
 
     <build>
@@ -155,5 +161,11 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <version>4.8.2</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
