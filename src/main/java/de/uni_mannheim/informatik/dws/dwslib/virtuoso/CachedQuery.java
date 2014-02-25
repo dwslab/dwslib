@@ -1,10 +1,5 @@
 package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
-import com.google.common.collect.ImmutableCollection;
-import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.Ehcache;
-import net.sf.ehcache.Element;
-import net.sf.ehcache.config.*;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.slf4j.Logger;
@@ -18,7 +13,6 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
- *
  * Disk-based cache. Does not store empty sparql results.
  * Always call @link shutdown() after using the cache!
  * Created by mschuhma on 2/21/14.
@@ -33,7 +27,7 @@ public class CachedQuery {
     private boolean shorten;
 
     private Query queryObj;
-    private ConcurrentNavigableMap<String,SPARQLQueryResultSet> cache;
+    private ConcurrentNavigableMap<String, SPARQLQueryResultSet> cache;
     private DB db;
 
     /**
@@ -94,21 +88,22 @@ public class CachedQuery {
 
         SPARQLQueryResultSet cacheValue;
         cacheValue = cache.get(query);
-        if (cacheValue != null)
+        if (cacheValue != null) {
+            System.out.println("Found cached entry");
             return cacheValue;
-
+        }
         else {
+            System.out.println("Not found cached entry");
             try {
-            if (queryObj == null) {
-                queryObj = new Query(server,user,password,shorten);
-            }
-            SPARQLQueryResultSet res = queryObj.sparqlQuery(query);
-            if (res.size() > 0) {
-                cache.put(query, res);
-                db.commit();
-            }
-            return res;
-
+                if (queryObj == null) {
+                    queryObj = new Query(server, user, password, shorten);
+                }
+                SPARQLQueryResultSet res = queryObj.sparqlQuery(query);
+                if (res.size() > 0) {
+                    cache.put(query, res);
+                    db.commit();
+                }
+                return res;
             }
             catch (Exception e) {
                 System.out.println("Sparql query failed: Could neither find cache nor connect to server.");
@@ -119,18 +114,19 @@ public class CachedQuery {
     }
 
     private void createCache() {
-
         File dbFile = new File("SparqlCache.mapdb");
-        if (!dbFile.exists())
+        if (!dbFile.exists()) {
             try {
                 dbFile.createNewFile();
-            } catch (IOException e) {
+            }
+            catch (IOException e) {
                 //TOOD better exception handling
                 e.printStackTrace();
             }
+        }
         db = DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
 
-        cache = db.getTreeMap("sparqlcache");
+        cache = db.getTreeMap("sparqlCache");
 
 //        Configuration cacheManagerConfig = new Configuration();
 //
@@ -160,22 +156,23 @@ public class CachedQuery {
 
         String q = "select * where {<http://dbpedia.org/resource/Berlin> ?p ?o}";
 
-        for (int i = 0; i <10; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println("Results " + i);
             SPARQLQueryResultSet res = main.sparqlQuery(q);
             //das hier geht
-            for (int j = 0; j < res.getColumnNames().length; j++)
+            for (int j = 0; j < res.getColumnNames().length; j++) {
                 System.out.println(res.getColumnNames()[j]);
+            }
         }
 
 
-        for (int i = 0; i <10; i++) {
+        for (int i = 0; i < 10; i++) {
             System.out.println("Results " + i);
             SPARQLQueryResultSet res = main.sparqlQuery(q);
             //das hier aber nicht. Liegt das daran, dann die ArrayList of HashMaps nicht serilaziable ist?
-            for (HashMap<String,String> m : res) {
-                for(Map.Entry<String,String> e : m.entrySet()) {
-                    System.out.println(e.getKey() + "\t"+ e.getValue());
+            for (HashMap<String, String> m : res) {
+                for (Map.Entry<String, String> e : m.entrySet()) {
+                    System.out.println(e.getKey() + "\t" + e.getValue());
                 }
             }
         }
@@ -183,7 +180,5 @@ public class CachedQuery {
         System.out.println("Done");
 
         main.shutdown();
-
     }
-
 }
