@@ -8,8 +8,6 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
@@ -89,11 +87,11 @@ public class CachedQuery {
         SPARQLQueryResultSet cacheValue;
         cacheValue = cache.get(query);
         if (cacheValue != null) {
-            System.out.println("Found cached entry");
+            log.debug("Found cached entry");
             return cacheValue;
         }
         else {
-            System.out.println("Not found cached entry");
+            log.debug("Not found cached entry");
             try {
                 if (queryObj == null) {
                     queryObj = new Query(server, user, password, shorten);
@@ -106,7 +104,8 @@ public class CachedQuery {
                 return res;
             }
             catch (Exception e) {
-                System.out.println("Sparql query failed: Could neither find cache nor connect to server.");
+                log.error("Sparql query failed: Could neither find cache nor connect to server.");
+                System.err.println("Sparql query failed: Could neither find cache nor connect to server.");
                 return null;
             }
 
@@ -120,65 +119,13 @@ public class CachedQuery {
                 dbFile.createNewFile();
             }
             catch (IOException e) {
-                //TOOD better exception handling
+                log.error("Could not created sparql cache file on disk");
                 e.printStackTrace();
             }
         }
         db = DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
 
         cache = db.getTreeMap("sparqlCache");
-
-//        Configuration cacheManagerConfig = new Configuration();
-//
-//        CacheConfiguration cacheConfig =
-//                new CacheConfiguration()
-//                .name("sparqlcache")
-//                .maxBytesLocalHeap(256, MemoryUnit.MEGABYTES)
-//                .persistence(new PersistenceConfiguration().
-//                        strategy(PersistenceConfiguration.Strategy.LOCALTEMPSWAP));
-//
-//        DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
-//        diskStoreConfiguration.setPath("sparqlCache");
-//        cacheManagerConfig.addDiskStore(diskStoreConfiguration);
-//
-//        cacheManager = new CacheManager(cacheManagerConfig);
-//        cache = cacheManager.getEhcache("sparqlcache");
-//
-//        log.debug("Ehcache for sparql queries created");
     }
 
-    public static void main(String[] args) throws Exception {
-
-        //Test methods
-
-        CachedQuery main = new CachedQuery(
-                "wifo5-32.informatik.uni-mannheim.de:1112", "dba", "test1234", false);
-
-        String q = "select * where {<http://dbpedia.org/resource/Berlin> ?p ?o}";
-
-        for (int i = 0; i < 10; i++) {
-            System.out.println("Results " + i);
-            SPARQLQueryResultSet res = main.sparqlQuery(q);
-            //das hier geht
-            for (int j = 0; j < res.getColumnNames().length; j++) {
-                System.out.println(res.getColumnNames()[j]);
-            }
-        }
-
-
-        for (int i = 0; i < 10; i++) {
-            System.out.println("Results " + i);
-            SPARQLQueryResultSet res = main.sparqlQuery(q);
-            //das hier aber nicht. Liegt das daran, dann die ArrayList of HashMaps nicht serilaziable ist?
-            for (HashMap<String, String> m : res) {
-                for (Map.Entry<String, String> e : m.entrySet()) {
-                    System.out.println(e.getKey() + "\t" + e.getValue());
-                }
-            }
-        }
-
-        System.out.println("Done");
-
-        main.shutdown();
-    }
 }
