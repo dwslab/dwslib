@@ -67,6 +67,23 @@ public class Query {
     }
 
     /**
+     * Initialize the connection directly using the given JDBC URI to connect to the database server and activate
+     * IRI shortening if <code>shorten</code> is set to true.
+     *
+     * Note, that the provided URI has to contain everything
+     * required to connect to the database, e.g., username, password and charset, as it is not modified for this
+     * call.
+     *
+     * @param jdbcUri full JDBC URI for connecting to the database
+     * @param shorten true if IRIs in result should be shortened, otherwise false
+     */
+    public Query(String jdbcUri, boolean shorten) throws SQLException {
+        this.shortener = shorten ? new URIShortener.LODShortener() : new URIShortener.DummyShortener();
+        DriverManager.registerDriver(new virtuoso.jdbc4.Driver());
+        this.conn = DriverManager.getConnection(jdbcUri);
+    }
+
+    /**
      * Determines whether this Query instance has IRI shortening enabled.
      *
      * @return true if IRI shortening is enabled, otherwise false.
