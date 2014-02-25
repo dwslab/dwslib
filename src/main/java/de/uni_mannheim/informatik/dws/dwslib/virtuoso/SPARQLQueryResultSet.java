@@ -1,5 +1,6 @@
 package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -7,7 +8,7 @@ import java.util.HashMap;
 /**
  * Provides access to the result of a SPARQL query executed using {@link Query}.
  */
-public class SPARQLQueryResultSet extends ArrayList<HashMap<String, String>> {
+public class SPARQLQueryResultSet extends ArrayList<HashMap<String, String>> implements Serializable {
     private String[] columnNames;
 
     public String[] getColumnNames() {

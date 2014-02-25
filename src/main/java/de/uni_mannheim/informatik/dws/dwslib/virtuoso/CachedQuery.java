@@ -1,14 +1,21 @@
 package de.uni_mannheim.informatik.dws.dwslib.virtuoso;
 
+import com.google.common.collect.ImmutableCollection;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Ehcache;
 import net.sf.ehcache.Element;
 import net.sf.ehcache.config.*;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.File;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
  *
@@ -20,9 +27,14 @@ public class CachedQuery {
 
     private final static Logger log = LoggerFactory.getLogger(Query.class);
 
-    private static Query queryObj;
-    private static Ehcache cache;
-    private static CacheManager cacheManager;
+    private String server;
+    private String user;
+    private String password;
+    private boolean shorten;
+
+    private Query queryObj;
+    private ConcurrentNavigableMap<String,SPARQLQueryResultSet> cache;
+    private DB db;
 
     /**
      * Initialize the connection to the given Virtuoso instance using the provided authentication
@@ -36,7 +48,10 @@ public class CachedQuery {
      */
     public CachedQuery(String server, String user, String password)
             throws SQLException {
-        queryObj = new Query(server, user, password);
+        this.server = server;
+        this.user = user;
+        this.password = password;
+        this.shorten = false;
         createCache();
     }
 
@@ -54,7 +69,10 @@ public class CachedQuery {
      */
     public CachedQuery(String server, String user, String password, boolean shorten)
             throws SQLException {
-        queryObj = new Query(server, user, password, shorten);
+        this.server = server;
+        this.user = user;
+        this.password = password;
+        this.shorten = shorten;
         createCache();
     }
 
@@ -62,8 +80,7 @@ public class CachedQuery {
      * Shutdown the underlying Ehcache. Always call this method at the end.
      */
     public void shutdown() {
-        cache.flush();
-        cacheManager.shutdown();
+        db.close();
     }
 
     /**
@@ -73,39 +90,100 @@ public class CachedQuery {
      * @throws IOException
      * @throws SQLException
      */
-    public SPARQLQueryResultSet sparqlQuery(String query) throws IOException, SQLException {
+    public synchronized SPARQLQueryResultSet sparqlQuery(String query) throws IOException, SQLException {
 
-        Element element;
-        if ((element = cache.get(query)) != null) {
-            return (SPARQLQueryResultSet) element.getObjectValue();
-        }
+        SPARQLQueryResultSet cacheValue;
+        cacheValue = cache.get(query);
+        if (cacheValue != null)
+            return cacheValue;
+
         else {
+            try {
+            if (queryObj == null) {
+                queryObj = new Query(server,user,password,shorten);
+            }
             SPARQLQueryResultSet res = queryObj.sparqlQuery(query);
-            if (res.size() > 0)
-                cache.put(new Element (res, res));
+            if (res.size() > 0) {
+                cache.put(query, res);
+                db.commit();
+            }
             return res;
+
+            }
+            catch (Exception e) {
+                System.out.println("Sparql query failed: Could neither find cache nor connect to server.");
+                return null;
+            }
+
         }
     }
 
     private void createCache() {
 
-        Configuration cacheManagerConfig = new Configuration()
-                .diskStore(new DiskStoreConfiguration()
-                        .path("sparqlcache"));
+        File dbFile = new File("SparqlCache.mapdb");
+        if (!dbFile.exists())
+            try {
+                dbFile.createNewFile();
+            } catch (IOException e) {
+                //TOOD better exception handling
+                e.printStackTrace();
+            }
+        db = DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
 
-        CacheConfiguration cacheConfig =
-                new CacheConfiguration()
-                .name("sparqlcache")
-                .maxBytesLocalHeap(50, MemoryUnit.MEGABYTES)
-                .persistence(new PersistenceConfiguration().
-                        strategy(PersistenceConfiguration.Strategy.LOCALTEMPSWAP));
+        cache = db.getTreeMap("sparqlcache");
 
-        cacheManagerConfig.addCache(cacheConfig);
+//        Configuration cacheManagerConfig = new Configuration();
+//
+//        CacheConfiguration cacheConfig =
+//                new CacheConfiguration()
+//                .name("sparqlcache")
+//                .maxBytesLocalHeap(256, MemoryUnit.MEGABYTES)
+//                .persistence(new PersistenceConfiguration().
+//                        strategy(PersistenceConfiguration.Strategy.LOCALTEMPSWAP));
+//
+//        DiskStoreConfiguration diskStoreConfiguration = new DiskStoreConfiguration();
+//        diskStoreConfiguration.setPath("sparqlCache");
+//        cacheManagerConfig.addDiskStore(diskStoreConfiguration);
+//
+//        cacheManager = new CacheManager(cacheManagerConfig);
+//        cache = cacheManager.getEhcache("sparqlcache");
+//
+//        log.debug("Ehcache for sparql queries created");
+    }
 
-        cacheManager = new CacheManager(cacheManagerConfig);
-        cache = cacheManager.getEhcache("sparqlcache");
+    public static void main(String[] args) throws Exception {
 
-        log.debug("Ehcache for sparql queries created");
+        //Test methods
+
+        CachedQuery main = new CachedQuery(
+                "wifo5-32.informatik.uni-mannheim.de:1112", "dba", "test1234", false);
+
+        String q = "select * where {<http://dbpedia.org/resource/Berlin> ?p ?o}";
+
+        for (int i = 0; i <10; i++) {
+            System.out.println("Results " + i);
+            SPARQLQueryResultSet res = main.sparqlQuery(q);
+            //das hier geht
+            for (int j = 0; j < res.getColumnNames().length; j++)
+                System.out.println(res.getColumnNames()[j]);
+        }
+
+
+        for (int i = 0; i <10; i++) {
+            System.out.println("Results " + i);
+            SPARQLQueryResultSet res = main.sparqlQuery(q);
+            //das hier aber nicht. Liegt das daran, dann die ArrayList of HashMaps nicht serilaziable ist?
+            for (HashMap<String,String> m : res) {
+                for(Map.Entry<String,String> e : m.entrySet()) {
+                    System.out.println(e.getKey() + "\t"+ e.getValue());
+                }
+            }
+        }
+
+        System.out.println("Done");
+
+        main.shutdown();
+
     }
 
 }
