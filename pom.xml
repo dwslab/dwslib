@@ -103,6 +103,10 @@
             <id>lski</id>
             <url>https://breda.informatik.uni-mannheim.de/nexus/content/groups/public/</url>
         </repository>
+        <repository>
+            <id>sourceforge</id>
+            <url>https://oss.sonatype.org/content/repositories/sourceforge-releases/</url>
+        </repository>
     </repositories>
     <distributionManagement>
         <repository>
@@ -144,6 +148,16 @@
         	<groupId>info.bliki.wiki</groupId>
         	<artifactId>bliki-core</artifactId>
         	<version>3.0.19</version>
+        </dependency>
+        <dependency>
+            <groupId>org.mapdb</groupId>
+            <artifactId>mapdb</artifactId>
+            <version>0.9.9</version>
+        </dependency>
+        <dependency>
+            <groupId>net.sf.ehcache</groupId>
+            <artifactId>ehcache</artifactId>
+            <version>2.8.1</version>
         </dependency>
         <dependency>
         	<groupId>de.tudarmstadt.ukp.wikipedia</groupId>
