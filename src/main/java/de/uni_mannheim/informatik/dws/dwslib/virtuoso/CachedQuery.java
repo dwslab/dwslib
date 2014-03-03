@@ -97,10 +97,8 @@ public class CachedQuery {
                     queryObj = new Query(server, user, password, shorten);
                 }
                 SPARQLQueryResultSet res = queryObj.sparqlQuery(query);
-                if (res.size() > 0) {
-                    cache.put(query, res);
-                    db.commit();
-                }
+                cache.put(query, res);
+                db.commit();
                 return res;
             }
             catch (Exception e) {

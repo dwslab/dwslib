@@ -117,7 +117,7 @@ public class Query {
             throws SQLException, IOException {
 
         Statement stmt = conn.createStatement();
-        log.info("Query: '{}'\n", query);
+        log.debug("Query: '{}'\n", query);
         return stmt.executeQuery(query);
     }
 
