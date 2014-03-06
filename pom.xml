@@ -4,7 +4,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>de.uni_mannheim.informatik.dws</groupId>
     <artifactId>dwslib</artifactId>
-    <version>1.1-SNAPSHOT</version>
+    <version>1.1-caching-SNAPSHOT</version>
     <packaging>jar</packaging>
     <name>dwslib - DWS Java Library</name>
     <url>http://dws.informatik.uni-mannheim.de</url>
