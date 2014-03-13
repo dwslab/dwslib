@@ -7,8 +7,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
+import org.jets3t.service.acl.AccessControlList;
+import org.jets3t.service.acl.GroupGrantee;
+import org.jets3t.service.acl.Permission;
 import org.jets3t.service.impl.rest.httpclient.RestS3Service;
 import org.jets3t.service.model.S3Bucket;
 import org.jets3t.service.model.S3Object;
@@ -67,6 +71,66 @@ public class S3Helper {
 		}
 		
 		return objects;
+	}
+	
+	public List<S3File> ListBucketFiles(String S3BucketName, String prefix)
+	{
+		ArrayList<S3File> objects = new ArrayList<S3File>();;
+		
+		try {
+			for(S3Object obj : getStorage().listObjects(S3BucketName, prefix, null))
+			{
+				objects.add(new S3File(S3BucketName, obj.getKey()));
+			}
+		} catch (S3ServiceException e) {
+			e.printStackTrace();
+		}
+		
+		return objects;
+	}
+	
+	public void SetAcl(String S3FileKey,
+			String S3Bucket, S3Permission perm)
+	{
+		try {
+			AccessControlList acl = getStorage().getObjectAcl(S3Bucket, S3FileKey);
+			
+			GroupGrantee grantee = null;
+			switch(perm.getGrantee())
+			{
+			case All:
+				grantee = GroupGrantee.ALL_USERS;
+				break;
+			case Authenticated:
+				grantee = GroupGrantee.AUTHENTICATED_USERS;
+				break;
+			case Log:
+				grantee = GroupGrantee.LOG_DELIVERY;
+				break;
+			}
+			
+			Permission p = null;
+			switch(perm.getPermission())
+			{
+			case Read:
+				p = Permission.PERMISSION_READ;
+				break;
+			case Write:
+				p = Permission.PERMISSION_WRITE;
+				break;
+			case Full:
+				p = Permission.PERMISSION_FULL_CONTROL;
+				break;
+			}
+			
+			acl.grantPermission(grantee, p);
+			
+			getStorage().putObjectAcl(S3Bucket, S3FileKey, acl);
+		} catch (S3ServiceException e) {
+			e.printStackTrace();
+		} catch (ServiceException e) {
+			e.printStackTrace();
+		}
 	}
 	
 	public void LoadFileFromS3(String localFile, String S3FileKey,
