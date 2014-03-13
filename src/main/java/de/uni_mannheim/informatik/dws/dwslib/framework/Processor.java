@@ -66,8 +66,8 @@ public abstract class Processor<E> {
 			left = -1;
 		}
 			
-		System.out.println(
-				 "Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S")
+		System.out.println(new Date()
+				 + " Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S")
 				 + " --> Total: " + total
 				 + ", Done: " + finished
 				 + ", " + (perItem==-1 ? "..." : DurationFormatUtils.formatDuration(perItem, "HH:mm:ss.S")) + " / item"
@@ -95,7 +95,7 @@ public abstract class Processor<E> {
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(threads);
 		for (E object : objectToProcess) {
-			executor.submit(new Worker(object, this));
+			executor.submit(new Worker<E>(object, this, executor));
 		}
 		long stillTodo = printState(executor, startTime);
 		while (stillTodo != 0) {
@@ -113,15 +113,31 @@ public abstract class Processor<E> {
 
 	private class Worker<E> implements Runnable {
 		private E object;
-		private Processor p;
+		private Processor<E> p;
+		private ThreadPoolExecutor executor;
 
-		public Worker(E object, Processor p) {
+		public Worker(E object, Processor<E> p, ThreadPoolExecutor executor) {
 			this.object = object;
 			this.p = p;
+			this.executor = executor;
 		}
 
 		public void run() {
-			p.process(object);
+			try
+			{
+				p.process(object);
+			}
+			catch(Exception e)
+			{
+				e.printStackTrace();
+				requeue();
+			}
+		}
+		
+		private void requeue()
+		{
+			log.log(Level.INFO, new Date() + " requeue worker for " + object.toString());
+			executor.submit(this);
 		}
 
 	}
