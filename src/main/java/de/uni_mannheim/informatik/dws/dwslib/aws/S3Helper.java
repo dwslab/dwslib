@@ -40,6 +40,11 @@ public class S3Helper {
 		return s3;
 	}
 	
+	public void setRequestPaysEnabled(boolean enabled)
+	{
+		getStorage().setRequesterPaysEnabled(enabled);
+	}
+	
 	public void SaveFileToS3(String localFile, String S3FileKey,
 			String S3Bucket) {
 		S3Object dataFileObject = new S3Object(localFile);

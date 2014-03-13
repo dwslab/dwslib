@@ -45,13 +45,15 @@ public class ParallelS3Downloader
 		}
 	}*/
 	
-	public ParallelS3Downloader(int numThreads, S3Credentials credentials, CommandTarget target, String localFolder, boolean overwriteExisting) throws Exception {
+	public ParallelS3Downloader(int numThreads, S3Credentials credentials, CommandTarget target, String localFolder, boolean overwriteExisting, boolean requesterPays) throws Exception {
 		super(numThreads, credentials, target);
 		
 		/*s3bucket = sourceS3Bucket;
 		prefix = sourceS3Prefix;*/
 		this.localFolder = localFolder;
 		overwrite = overwriteExisting;
+		
+		getS3().setRequestPaysEnabled(requesterPays);
 		
 		/*if(s3bucket==null)
 			throw new Exception("Source bucket cannot be null!");*/

@@ -48,6 +48,7 @@ public class ParallelS3 {
 		
 		// get command
 		options.addOption("overwritelocal", false, "Overwrite local files");
+		options.addOption("requesterpays", false, "Enabled download from 'requester pays' sources");
 		
 		//Option cmdTarget = OptionBuilder.withArgName(name)
 		
@@ -105,8 +106,9 @@ public class ParallelS3 {
 			{
 				String localFolder = cmd.getArgs()[1];
 				boolean overwriteExisting = cmd.hasOption("overwritelocal");
+				boolean requesterpays = cmd.hasOption("requesterpays");
 				
-				processor = new ParallelS3Downloader(numThreads, cred, target, localFolder, overwriteExisting);
+				processor = new ParallelS3Downloader(numThreads, cred, target, localFolder, overwriteExisting, requesterpays);
 			}
 			/*else if(cmd.getArgs()[0].equals("get"))
 			{
