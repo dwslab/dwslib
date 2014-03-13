@@ -59,7 +59,7 @@ public abstract class Processor<E> {
 				.printf("Runtime: %ds --> Total: %d, Done: %d, %ss / item, Finished in: %ds \n",
 						runtime, total, finished,
 						String.format("%.2f", ((float) runtime) / finished),
-						(int) ((float) runtime / finished) * (total - finished));
+						(int) (((float) runtime / finished) * (total - finished)));
 
 		return total - finished;
 	}
