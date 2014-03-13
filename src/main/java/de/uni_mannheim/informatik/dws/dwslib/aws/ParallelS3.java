@@ -46,6 +46,9 @@ public class ParallelS3 {
 										.withDescription("A URL representing the filter to determine the S3-files to process")
 										.create("targetfilter");
 		
+		// get command
+		options.addOption("overwritelocal", false, "Overwrite local files");
+		
 		//Option cmdTarget = OptionBuilder.withArgName(name)
 		
 		// General options
@@ -98,6 +101,13 @@ public class ParallelS3 {
 				
 				return;
 			}
+			if(cmd.getArgs()[0].equals("get") && cmd.getArgs().length==2)
+			{
+				String localFolder = cmd.getArgs()[1];
+				boolean overwriteExisting = cmd.hasOption("overwritelocal");
+				
+				processor = new ParallelS3Downloader(numThreads, cred, target, localFolder, overwriteExisting);
+			}
 			/*else if(cmd.getArgs()[0].equals("get"))
 			{
 				
@@ -121,15 +131,21 @@ public class ParallelS3 {
 		
 		System.out.println("\nCommands: \n\n"
 							+ "setacl <group> <permission>\n"
-							+ "\tChange permissions of files specified by <target>.\n"
+							+ "\tChange permissions of files.\n"
 							+ "\t<group>: All, Authenticated, Log\n"
 							+ "\t<permission>: Read, Write, Full\n\n"
+							
 							+ "ls\n"
-							+ "\tLists the files that will be processed with the given options.");
+							+ "\tLists the files that will be processed with the given options.\n\n"
+							
+							+ "get <localfolder>\n"
+							+ "\tDownload files to <localfolder>.\n"
+							+ "\tuse -overwritelocal to overwrite existing files");
 		
 		System.out.println("\nExamples: \n\n"
 							+ "ParallelS3 -targetfile filelist.txt setacl All Read\n\n"
-							+ "ParallelS3 -targetfilter s3://mybucket/keyprefix setacl Authenticated Write");
+							+ "ParallelS3 -targetfilter s3://mybucket/keyprefix setacl Authenticated Write\n\n"
+							+ "ParallelS3 -targetfile filelist.txt -overwritelocal get local/folder/");
 	}
 	
 	private static CommandTarget parseTarget(CommandLine cmd) throws Exception

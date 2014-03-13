@@ -8,15 +8,15 @@ import java.util.List;
 import de.uni_mannheim.informatik.dws.dwslib.framework.Processor;
 
 public class ParallelS3Downloader
-	extends Processor<String>
+	extends ParallelS3Processor
 {
-	private String s3bucket;
-	private String prefix;
+	/*private String s3bucket;
+	private String prefix;*/
 	private String localFolder;
-	private S3Helper s3;
+	//private S3Helper s3;
 	private boolean overwrite;
 
-	public static void main(String[] args)
+	/*public static void main(String[] args)
 	{
 		if(args.length!=6)
 		{
@@ -43,39 +43,39 @@ public class ParallelS3Downloader
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-	}
+	}*/
 	
-	public ParallelS3Downloader(int threads, String sourceS3Bucket, String sourceS3Prefix, String localFolder, String awsAccessKey, String awsSecret, boolean overwriteExisting) throws Exception {
-		super(threads);
+	public ParallelS3Downloader(int numThreads, S3Credentials credentials, CommandTarget target, String localFolder, boolean overwriteExisting) throws Exception {
+		super(numThreads, credentials, target);
 		
-		s3bucket = sourceS3Bucket;
-		prefix = sourceS3Prefix;
+		/*s3bucket = sourceS3Bucket;
+		prefix = sourceS3Prefix;*/
 		this.localFolder = localFolder;
 		overwrite = overwriteExisting;
 		
-		if(s3bucket==null)
-			throw new Exception("Source bucket cannot be null!");
+		/*if(s3bucket==null)
+			throw new Exception("Source bucket cannot be null!");*/
 		if(this.localFolder==null)
 			throw new Exception("Local folder cannot be null!");
 		
 		if(!this.localFolder.endsWith("/"))
 			this.localFolder += "/";
 		
-		if(awsAccessKey==null)
+		/*if(awsAccessKey==null)
 			throw new Exception("AWS Access key cannot be null!");
 		if(awsSecret==null)
-			throw new Exception("AWS Secret key cannot be null!");
+			throw new Exception("AWS Secret key cannot be null!");*/
 		
-		s3 = new S3Helper(awsAccessKey, awsSecret);
+		//s3 = new S3Helper(awsAccessKey, awsSecret);
 	}
 
-	@Override
+	/*@Override
 	protected List<String> fillListToProcess() {
 		System.out.println("Loading file list from S3 ...");
 		return s3.ListBucketContents(this.s3bucket, this.prefix);
-	}
+	}*/
 
-	@Override
+	/*@Override
 	protected void process(String object) {
 		File f = new File(localFolder, object);
 		
@@ -84,6 +84,17 @@ public class ParallelS3Downloader
 		
 		if(!f.exists() || overwrite)
 			s3.LoadFileFromS3(f.getAbsolutePath(), object, this.s3bucket);
+	}*/
+
+	@Override
+	protected void process(S3File object) {
+		File f = new File(localFolder, object.get_key());
+		
+		if(!f.getParentFile().exists())
+			f.getParentFile().mkdirs();
+		
+		if(!f.exists() || overwrite)
+			getS3().LoadFileFromS3(f.getAbsolutePath(), object.get_key(), object.get_bucket());
 	}
 	
 }

@@ -9,6 +9,8 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang3.time.DurationFormatUtils;
+
 /**
  * This class provides a framework to process a given set of inputs in parallel
  * using a set of threads.
@@ -54,12 +56,30 @@ public abstract class Processor<E> {
 	private long printState(ThreadPoolExecutor executor, long startTime) {
 		long total = executor.getTaskCount();
 		long finished = executor.getCompletedTaskCount();
-		long runtime = (System.currentTimeMillis() - startTime) / 1000;
-		System.out
+		long runtime = (System.currentTimeMillis() - startTime);
+		long perItem = (long) (((float) runtime) / finished);
+		long left = (long) (((float) runtime / finished) * (total - finished));
+		
+		if((((float) runtime) / finished)==Float.POSITIVE_INFINITY)
+		{
+			perItem = -1;
+			left = -1;
+		}
+			
+		System.out.println(
+				 "Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S")
+				 + " --> Total: " + total
+				 + ", Done: " + finished
+				 + ", " + (perItem==-1 ? "..." : DurationFormatUtils.formatDuration(perItem, "HH:mm:ss.S")) + " / item"
+				 + ", Finished in: " + (left==-1 ? "..." : DurationFormatUtils.formatDuration(left, "HH:mm:ss.S")));
+		 
+		/*System.out
 				.printf("Runtime: %ds --> Total: %d, Done: %d, %ss / item, Finished in: %ds \n",
-						runtime, total, finished,
+						runtime, 
+						total, 
+						finished,
 						String.format("%.2f", ((float) runtime) / finished),
-						(int) (((float) runtime / finished) * (total - finished)));
+						(int) (((float) runtime / finished) * (total - finished)));*/
 
 		return total - finished;
 	}
