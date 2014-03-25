@@ -6,7 +6,10 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.jets3t.service.S3ServiceException;
 import org.jets3t.service.ServiceException;
@@ -22,9 +25,18 @@ public class S3Helper {
 	
 	private RestS3Service s3;
 	private AWSCredentials awsCreds;
+	protected static Logger log;
 	
 	public S3Helper(String accessKey, String secretKey)
 	{
+		try {
+			log = Logger.getLogger(getClass().getEnclosingClass()
+					.getSimpleName());
+		} catch (NullPointerException ne) {
+			log = Logger.getLogger("S3Helper.java");
+			log.log(Level.WARNING, "Could not obtain class name");
+		}
+		
 		awsCreds = new AWSCredentials(accessKey, secretKey);
 	}
 	
@@ -33,8 +45,8 @@ public class S3Helper {
 			try {
 				s3 = new RestS3Service(awsCreds);
 			} catch (S3ServiceException e1) {
-				System.out.println("Unable to connect to S3!");
-				e1.printStackTrace();
+				log.log(Level.SEVERE, new Date() + "Unable to connect to S3!");
+				log.log(Level.SEVERE, e1.getMessage());
 			}
 		}
 		return s3;
@@ -54,11 +66,11 @@ public class S3Helper {
 			getStorage().putObject(S3Bucket, dataFileObject);
 			dataFileObject.closeDataInputStream();
 		} catch (S3ServiceException e) {
-			System.out.println("Error saving output to S3: " + localFile);
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
+			log.log(Level.WARNING, e.getMessage());
 		} catch (IOException e) {
-			System.out.println("Error saving output to S3: " + localFile);
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 	
@@ -72,7 +84,8 @@ public class S3Helper {
 				objects.add(obj.getKey());
 			}
 		} catch (S3ServiceException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error listing files");
+			log.log(Level.WARNING, e.getMessage());
 		}
 		
 		return objects;
@@ -88,7 +101,8 @@ public class S3Helper {
 				objects.add(new S3File(S3BucketName, obj.getKey()));
 			}
 		} catch (S3ServiceException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error listing files");
+			log.log(Level.WARNING, e.getMessage());
 		}
 		
 		return objects;
@@ -132,9 +146,11 @@ public class S3Helper {
 			
 			getStorage().putObjectAcl(S3Bucket, S3FileKey, acl);
 		} catch (S3ServiceException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error setting permissions");
+			log.log(Level.WARNING, e.getMessage());
 		} catch (ServiceException e) {
-			e.printStackTrace();
+			log.log(Level.WARNING, new Date() + "Error setting permissions");
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 	
@@ -148,12 +164,12 @@ public class S3Helper {
 			storeStreamToFile(inputObject.getDataInputStream(), file);
 			inputObject.closeDataInputStream();
 		} catch (IOException e) {
-			e.printStackTrace();
-			System.out.println("Unable to save local file: " + localFile);
+			log.log(Level.WARNING, new Date() + "Unable to save local file: " + localFile);
+			log.log(Level.WARNING, e.getMessage());
 		} catch (ServiceException e) {
-			e.printStackTrace();
-			System.out.println("Unable to load file from S3: " + S3Bucket + "/"
+			log.log(Level.WARNING, new Date() + "Unable to load file from S3: " + S3Bucket + "/"
 					+ S3FileKey);
+			log.log(Level.WARNING, e.getMessage());
 		}
 	}
 	

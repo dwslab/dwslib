@@ -3,8 +3,11 @@ package de.uni_mannheim.informatik.dws.dwslib.aws;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.net.URL;
+import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class CommandTarget {
 	
@@ -17,14 +20,31 @@ public class CommandTarget {
 	private String fileList;
 	private S3FileFilter fileFilter;
 	private CommandTargetType targetType;
+	protected static Logger log;
 	
 	public CommandTarget(String fileList)
 	{
+		try {
+			log = Logger.getLogger(getClass().getEnclosingClass()
+					.getSimpleName());
+		} catch (NullPointerException ne) {
+			log = Logger.getLogger("CommandTarget.java");
+			log.log(Level.WARNING, "Could not obtain class name");
+		}
+		
 		setFileList(fileList);
 	}
 	
 	public CommandTarget(S3FileFilter filter)
 	{
+		try {
+			log = Logger.getLogger(getClass().getEnclosingClass()
+					.getSimpleName());
+		} catch (NullPointerException ne) {
+			log = Logger.getLogger("CommandTarget.java");
+			log.log(Level.WARNING, "Could not obtain class name");
+		}
+		
 		setFileFilter(filter);
 	}
 	
@@ -52,6 +72,8 @@ public class CommandTarget {
 	{
 		List<S3File> result = new LinkedList<S3File>();
 		
+		log.log(Level.INFO, "Loading file list from '" + getFileList() + "' ...");
+		
 		try
 		{
 			BufferedReader r = new BufferedReader(new FileReader(getFileList()));
@@ -69,7 +91,7 @@ public class CommandTarget {
 		}
 		catch(Exception e)
 		{
-			e.printStackTrace();
+			log.log(Level.INFO, "Error loading file list: " + e.getMessage()); 
 			
 			throw new Exception("Cannot read file list!");
 		}
@@ -79,7 +101,7 @@ public class CommandTarget {
 	
 	protected List<S3File> loadFileListFromS3(S3Helper s3)
 	{
-		System.out.println("Retrieving list of files to process ...");
+		log.log(Level.INFO, "Retrieving list of files to process ...");
 		return s3.ListBucketFiles(getFileFilter().getBucketName(), getFileFilter().getPrefix());
 	}
 	
@@ -87,13 +109,20 @@ public class CommandTarget {
 	{
 		try
 		{
+			List<S3File> lst = null;
+			
 			if(getTargetType()==CommandTargetType.Filter)
-				return loadFileListFromS3(s3);
+				lst = loadFileListFromS3(s3);
 			else
-				return loadFileListFromFile();			
+				lst = loadFileListFromFile();
+			
+			log.log(Level.INFO, "Loaded " + lst.size() + " file names to process");
+			
+			return lst;
 		}
 		catch(Exception e)
 		{
+			log.log(Level.SEVERE, "Failed to get list of files to process");
 			return new LinkedList<S3File>();
 		}
 	}

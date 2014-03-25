@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 
 import de.uni_mannheim.informatik.dws.dwslib.aws.CommandTarget.CommandTargetType;
 import de.uni_mannheim.informatik.dws.dwslib.framework.Processor;

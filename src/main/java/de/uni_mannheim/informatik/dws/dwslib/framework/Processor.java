@@ -21,7 +21,7 @@ import org.apache.commons.lang3.time.DurationFormatUtils;
 public abstract class Processor<E> {
 
 	private int threads;
-	private static Logger log;
+	protected static Logger log;
 	private List<E> objectToProcess;
 
 	public Processor(int threads) {
@@ -36,8 +36,8 @@ public abstract class Processor<E> {
 			log = Logger.getLogger(getClass().getEnclosingClass()
 					.getSimpleName());
 		} catch (NullPointerException ne) {
-			System.out.println("Could not obtain class name");
 			log = Logger.getLogger("Processor.java");
+			log.log(Level.WARNING, "Could not obtain class name");
 		}
 	}
 
@@ -65,9 +65,8 @@ public abstract class Processor<E> {
 			perItem = -1;
 			left = -1;
 		}
-			
-		System.out.println(new Date()
-				 + " Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S")
+		
+		log.log(Level.INFO, new Date() + " Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S")
 				 + " --> Total: " + total
 				 + ", Done: " + finished
 				 + ", " + (perItem==-1 ? "..." : DurationFormatUtils.formatDuration(perItem, "HH:mm:ss.S")) + " / item"
@@ -129,7 +128,7 @@ public abstract class Processor<E> {
 			}
 			catch(Exception e)
 			{
-				e.printStackTrace();
+				log.log(Level.WARNING, new Date() + "Worker-task failed: " + e.getMessage());
 				requeue();
 			}
 		}
