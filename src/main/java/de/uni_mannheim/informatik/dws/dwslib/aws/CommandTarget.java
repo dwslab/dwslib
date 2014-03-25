@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.jets3t.service.S3ServiceException;
+
 public class CommandTarget {
 	
 	public enum CommandTargetType
@@ -17,7 +19,7 @@ public class CommandTarget {
 		Filter
 	}
 	
-	private String fileList;
+	private String fileList = "";
 	private S3FileFilter fileFilter;
 	private CommandTargetType targetType;
 	protected static Logger log;
@@ -74,6 +76,29 @@ public class CommandTarget {
 		
 		log.log(Level.INFO, "Loading file list from '" + getFileList() + "' ...");
 		
+		List<S3File> done = new LinkedList<S3File>();
+		
+		try
+		{
+			BufferedReader r = new BufferedReader(new FileReader(getFileList() + "_done"));
+			
+			String line;
+			
+			while((line = r.readLine()) != null)
+			{	
+				URL u = new URL(line.replace("s3://", "http://"));
+				
+				done.add(new S3File(u.getHost(), u.getPath().replaceFirst("/", "")));
+			}
+			
+			r.close();
+		}
+		catch(Exception e)
+		{
+			log.log(Level.INFO, "Error loading completed file list: " + e.getMessage()); 
+		}		
+		
+		long skipped=0;
 		try
 		{
 			BufferedReader r = new BufferedReader(new FileReader(getFileList()));
@@ -84,7 +109,12 @@ public class CommandTarget {
 			{	
 				URL u = new URL(line.replace("s3://", "http://"));
 				
-				result.add(new S3File(u.getHost(), u.getPath().replaceFirst("/", "")));
+				S3File f = new S3File(u.getHost(), u.getPath().replaceFirst("/", ""));
+				
+				if(!done.contains(f))
+					result.add(f);
+				else
+					skipped++;
 			}
 			
 			r.close();
@@ -96,10 +126,13 @@ public class CommandTarget {
 			throw new Exception("Cannot read file list!");
 		}
 		
+		if(skipped>0)
+			log.log(Level.INFO, "Skipped " + skipped + " already processed files.");
+		
 		return result;
 	}
 	
-	protected List<S3File> loadFileListFromS3(S3Helper s3)
+	protected List<S3File> loadFileListFromS3(S3Helper s3) throws S3ServiceException
 	{
 		log.log(Level.INFO, "Retrieving list of files to process ...");
 		return s3.ListBucketFiles(getFileFilter().getBucketName(), getFileFilter().getPrefix());

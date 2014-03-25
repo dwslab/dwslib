@@ -85,18 +85,35 @@ public abstract class Processor<E> {
 
 	protected abstract List<E> fillListToProcess();
 
+	protected void beforeProcess() {}
+	protected void afterProcess() {}
+	
 	public void process() throws FileNotFoundException, IOException {
 		long startTime = new Date().getTime();
 		log.log(Level.INFO, new Date() + " " + "Starting.");
 
 		objectToProcess = fillListToProcess();
 
+		beforeProcess();
+		
 		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors
 				.newFixedThreadPool(threads);
+		
+		long l = System.currentTimeMillis();
 		for (E object : objectToProcess) {
 			executor.submit(new Worker<E>(object, this, executor));
+			
+			if(System.currentTimeMillis()-l>5000)
+			{
+				printState(executor, startTime);
+				l = System.currentTimeMillis();
+			}
 		}
+		
 		long stillTodo = printState(executor, startTime);
+		
+		// reset start time so avg time per item is not affected by set-up time
+		startTime = new Date().getTime();
 		while (stillTodo != 0) {
 			try {
 				Thread.sleep(10000);
@@ -107,6 +124,9 @@ public abstract class Processor<E> {
 		}
 
 		executor.shutdown();
+		
+		afterProcess();
+		
 		log.log(Level.INFO, new Date() + " " + "Done.");
 	}
 
@@ -141,6 +161,6 @@ public abstract class Processor<E> {
 
 	}
 
-	protected abstract void process(E object);
+	protected abstract void process(E object) throws Exception;
 
 }

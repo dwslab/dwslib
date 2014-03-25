@@ -58,7 +58,7 @@ public class S3Helper {
 	}
 	
 	public void SaveFileToS3(String localFile, String S3FileKey,
-			String S3Bucket) {
+			String S3Bucket) throws S3ServiceException, IOException {
 		S3Object dataFileObject = new S3Object(localFile);
 		dataFileObject.setKey(S3FileKey);
 		dataFileObject.setDataInputFile(new File(localFile));
@@ -68,13 +68,15 @@ public class S3Helper {
 		} catch (S3ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		} catch (IOException e) {
 			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		}
 	}
 	
-	public List<String> ListBucketContents(String S3BucketName, String prefix)
+	public List<String> ListBucketContents(String S3BucketName, String prefix) throws S3ServiceException
 	{
 		ArrayList<String> objects = new ArrayList<String>();;
 		
@@ -86,12 +88,13 @@ public class S3Helper {
 		} catch (S3ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error listing files");
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		}
 		
 		return objects;
 	}
 	
-	public List<S3File> ListBucketFiles(String S3BucketName, String prefix)
+	public List<S3File> ListBucketFiles(String S3BucketName, String prefix) throws S3ServiceException
 	{
 		ArrayList<S3File> objects = new ArrayList<S3File>();;
 		
@@ -103,13 +106,14 @@ public class S3Helper {
 		} catch (S3ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error listing files");
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		}
 		
 		return objects;
 	}
 	
 	public void SetAcl(String S3FileKey,
-			String S3Bucket, S3Permission perm)
+			String S3Bucket, S3Permission perm) throws ServiceException
 	{
 		try {
 			AccessControlList acl = getStorage().getObjectAcl(S3Bucket, S3FileKey);
@@ -148,14 +152,16 @@ public class S3Helper {
 		} catch (S3ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error setting permissions");
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		} catch (ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error setting permissions");
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		}
 	}
 	
 	public void LoadFileFromS3(String localFile, String S3FileKey,
-			String S3Bucket) {
+			String S3Bucket) throws IOException, ServiceException {
 		File file = new File(localFile);
 		S3Object inputObject;
 		try {
@@ -166,10 +172,12 @@ public class S3Helper {
 		} catch (IOException e) {
 			log.log(Level.WARNING, new Date() + "Unable to save local file: " + localFile);
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		} catch (ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Unable to load file from S3: " + S3Bucket + "/"
 					+ S3FileKey);
 			log.log(Level.WARNING, e.getMessage());
+			throw e;
 		}
 	}
 	

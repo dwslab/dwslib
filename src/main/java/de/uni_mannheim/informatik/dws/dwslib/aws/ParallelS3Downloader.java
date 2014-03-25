@@ -5,6 +5,8 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.List;
 
+import org.jets3t.service.ServiceException;
+
 import de.uni_mannheim.informatik.dws.dwslib.framework.Processor;
 
 public class ParallelS3Downloader
@@ -89,7 +91,7 @@ public class ParallelS3Downloader
 	}*/
 
 	@Override
-	protected void process(S3File object) {
+	protected void process(S3File object) throws Exception {
 		File f = new File(localFolder, object.get_key());
 		
 		if(!f.getParentFile().exists())
@@ -97,6 +99,8 @@ public class ParallelS3Downloader
 		
 		if(!f.exists() || overwrite)
 			getS3().LoadFileFromS3(f.getAbsolutePath(), object.get_key(), object.get_bucket());
+		
+		setDone(object);
 	}
 	
 }
