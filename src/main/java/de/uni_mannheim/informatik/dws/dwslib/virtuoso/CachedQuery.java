@@ -7,7 +7,10 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.sql.SQLException;
+import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 
 /**
@@ -25,7 +28,7 @@ public class CachedQuery {
     private boolean shorten;
 
     private Query queryObj;
-    private ConcurrentNavigableMap<String, SPARQLQueryResultSet> cache;
+    private Map<String, SPARQLQueryResultSet> cache;
     private DB db;
 
     /**
@@ -82,10 +85,11 @@ public class CachedQuery {
      * @throws java.io.IOException
      * @throws java.sql.SQLException
      */
-    public synchronized SPARQLQueryResultSet sparqlQuery(String query) throws IOException, SQLException {
+    public synchronized SPARQLQueryResultSet sparqlQuery(String query)
+            throws IOException, SQLException {
 
         SPARQLQueryResultSet cacheValue;
-        cacheValue = cache.get(query);
+        cacheValue = cache.get(toSHA1(query));
         if (cacheValue != null) {
             log.debug("Found cached entry");
             return cacheValue;
@@ -97,7 +101,7 @@ public class CachedQuery {
                     queryObj = new Query(server, user, password, shorten);
                 }
                 SPARQLQueryResultSet res = queryObj.sparqlQuery(query);
-                cache.put(query, res);
+                cache.put(toSHA1(query), res);
                 db.commit();
                 return res;
             }
@@ -121,9 +125,36 @@ public class CachedQuery {
                 e.printStackTrace();
             }
         }
-        db = DBMaker.newFileDB(dbFile).closeOnJvmShutdown().make();
+        db = DBMaker.newFileDB(dbFile)
+                .syncOnCommitDisable()
+                .transactionDisable()
+                .asyncWriteEnable()
+                .asyncWriteFlushDelay(500)
+                .mmapFileEnable()
+                .closeOnJvmShutdown()
+                .make();
 
-        cache = db.getTreeMap("sparqlCache");
+        cache = db.getHashMap("sparqlCache");
+    }
+
+    public static String toSHA1(String input) {
+        MessageDigest md = null;
+        try {
+            md = MessageDigest.getInstance("SHA-1");
+        }
+        catch(NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        }
+        return byteArrayToHexString((md.digest(input.getBytes())));
+    }
+
+    private static String byteArrayToHexString(byte[] b) {
+        String result = "";
+        for (int i=0; i < b.length; i++) {
+            result +=
+                    Integer.toString( ( b[i] & 0xff ) + 0x100, 16).substring( 1 );
+        }
+        return result;
     }
 
 }
