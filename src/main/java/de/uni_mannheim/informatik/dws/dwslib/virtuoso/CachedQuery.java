@@ -126,7 +126,7 @@ public class CachedQuery {
             }
         }
         db = DBMaker.newFileDB(dbFile)
-                .syncOnCommitDisable()
+                .commitFileSyncDisable()
                 .transactionDisable()
                 .asyncWriteEnable()
                 .asyncWriteFlushDelay(500)
