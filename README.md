@@ -1,6 +1,8 @@
 DWSlib
 ======
 
+[![Build Status](https://travis-ci.org/dfleischhacker/dwslib.svg?branch=master)](https://travis-ci.org/dfleischhacker/dwslib)
+
 This library contains some functionality commonly used at the
 [Data and Web Science Research Group](http://dws.informatik.uni-mannheim.de), University of Mannheim.
 
