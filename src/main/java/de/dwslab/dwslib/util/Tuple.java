@@ -6,7 +6,9 @@ package de.dwslab.dwslib.util;
  *
  * @author Daniel Fleischhacker
  * @version 1.1 (Michael)
+ * @deprecated As of release 2.0.0 deprecated in favor of org.apache.commons.lang3.tuple.Pair<L,R>
  */
+@Deprecated
 public class Tuple<T, S> {
     private T firstElement;
     private S secondElement;
