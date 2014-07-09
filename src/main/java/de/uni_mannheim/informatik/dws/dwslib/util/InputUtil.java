@@ -9,8 +9,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.SequenceInputStream;
-import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -100,23 +100,28 @@ public class InputUtil {
 
 	/**
 	 * Returns the most likely fitting {@link BufferedReader} for a given file.
+	 * In case the file is a directory, all files within the directory are
+	 * combined into an {@link InputStream} an returned as one
+	 * {@link BufferedReader} using the internal function
+	 * {@link #getBufferedReader(Collection)}.
 	 * 
 	 * @param File
-	 *            which should be read
+	 *            file or directory which should be read.
 	 * @return {@link BufferedReader}
 	 * @throws IOException
-	 *             If file was not found or Stream could not be opened.
+	 *             If file was not found or stream could not be opened.
 	 */
 	public static BufferedReader getBufferedReader(File f) throws IOException {
-		BufferedReader br;
-		if (f.getName().endsWith("gz")) {
-			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
-					new FileInputStream(f))));
+		if (f.isFile()) {
+			if (f.getName().endsWith(".gz")) {
+				return new BufferedReader(new InputStreamReader(
+						new GZIPInputStream(new FileInputStream(f))));
+			} else {
+				return new BufferedReader(new FileReader(f));
+			}
 		} else {
-			br = new BufferedReader(new FileReader(f));
+			return getBufferedReader(Arrays.asList(f.listFiles()));
 		}
-
-		return br;
 	}
 
 	/**
@@ -133,7 +138,7 @@ public class InputUtil {
 	public static BufferedReader getBufferedReader(File f, String encoding)
 			throws IOException {
 		BufferedReader br;
-		if (f.getName().endsWith("gz")) {
+		if (f.getName().endsWith(".gz")) {
 			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
 					new FileInputStream(f)), encoding));
 		} else {
@@ -144,10 +149,22 @@ public class InputUtil {
 		return br;
 	}
 
-	public static BufferedReader getBufferedReader(Collection<File> files)
+	/**
+	 * Creates one {@link BufferedReader} for a {@link List} of {@link File}s.
+	 * The list will be sorted internally and separate {@link InputStream}s will
+	 * be added to the one {@link BufferedReader}.
+	 * 
+	 * @param files
+	 *            {@link List} of {@link File}s which should be read.
+	 * @return {@link BufferedReader}
+	 * @throws IOException
+	 *             , if the files do not exist or the streams cannot be opened.
+	 */
+	public static BufferedReader getBufferedReader(List<File> files)
 			throws IOException {
 		List<InputStream> streamsToProcess = new ArrayList<InputStream>(
 				files.size());
+		Collections.sort(files);
 		for (File f : files) {
 			// distinguish inflated and deflated input files
 			if (f.getName().endsWith(".gz")) {
