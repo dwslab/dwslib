@@ -33,8 +33,8 @@ is done by adding
 to the respective POM.
 
 If your are not using Maven for managing dependencies, just grab it from
-[this page](https://breda.informatik.uni-mannheim.de/nexus/index.html#nexus-search;gav~de.uni_mannheim.informatik.dws~dwslib~~~)
-and include it in your project's dependencies.
+[this page](https://breda.informatik.uni-mannheim.de/nexus/index.html#nexus-search;gav~de.dwslab~dwslib~~~) and include it in your project's dependencies. Older releases before migration to the dwslab.de domain are available using from [this page](https://breda.informatik.uni-mannheim.de/nexus/index.html#nexus-search;gav~de.uni_mannheim.informatik.dws~dwslib~~~).
+
 
 
 ## Content
