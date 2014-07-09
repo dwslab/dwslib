@@ -12,9 +12,9 @@ If you use Maven for building your project, just add
 
 ```
 <dependency>
-  <groupId>de.uni_mannheim.informatik.dws</groupId>
+  <groupId>de.dwslab</groupId>
   <artifactId>dwslib</artifactId>
-  <version>1.0-SNAPSHOT</version>
+  <version>2.0.0-SNAPSHOT</version>
 </dependency>
 ```
 
