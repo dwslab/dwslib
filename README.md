@@ -24,7 +24,7 @@ is done by adding
 ```
 <repositories>
   <repository>
-    <id>lski</id>
+    <id>dws-public</id>
     <url>https://breda.informatik.uni-mannheim.de/nexus/content/groups/public/</url>
   </repository>
 </repositories>
