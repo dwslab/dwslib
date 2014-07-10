@@ -46,15 +46,20 @@ If your are not using Maven for managing dependencies, just grab it from
 ### Util
 * DomainUtil: Collection of often used functionalities to process URLs (e.g. get PLD, Domain, Compress based on CC)
 * InputUtil: Collection of often used functionalities to read input files (e.g. get all files in a directory, get input stream for file)
-* Tuple: Generic class for representing ordered pairs of data
 * FileUtil: Collection of often used functionalities to handle files.
 * BufferedChunkingWriter: A BufferedWriter (Using GZIPOutputStream) taking care of chunking the output in multiple files.
 
-### Virtuoso:
+### Virtuoso
 * LoadURI: URI Shortener (both ways) based on prefix.cc list
 * Query: Virtuoso Sparql Query Processor based on direct JDBC driver (not http sparql endpoint -> no 1mio line limit)
 
-### Others:
+### CLI
+
+For usage information call the following classes from command-line without arguments or with the -h option.
+* QueryCLI: Command-line tool for querying Virtuoso triple stores via JDBC and writing the result to TSV files
+* SplitGZIPFile: Command-line for splitting large GZIP files into smaller GZIP files of given size
+
+### Others
 * Collection: collection helper methods (sortHashMapByValue, ...)
 * Counter: Counter for abitrary objects (python counter like)
 * MyFileReader: utf-8 file reader line-by-line; utf-8 tab (or any other character) separated file reader
