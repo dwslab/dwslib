@@ -1,4 +1,4 @@
-package de.dwslab.dwslib;
+package de.dwslab.dwslib.util.io;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

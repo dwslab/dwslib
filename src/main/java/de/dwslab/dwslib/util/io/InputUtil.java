@@ -1,4 +1,4 @@
-package de.dwslab.dwslib.util;
+package de.dwslab.dwslib.util.io;
 
 import java.io.BufferedReader;
 import java.io.File;

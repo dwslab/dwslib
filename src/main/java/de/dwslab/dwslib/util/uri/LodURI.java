@@ -1,6 +1,7 @@
-package de.dwslab.dwslib.virtuoso;
+package de.dwslab.dwslib.util.uri;
 
-import de.dwslab.dwslib.MyFileReader;
+import de.dwslab.dwslib.util.io.MyFileReader;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

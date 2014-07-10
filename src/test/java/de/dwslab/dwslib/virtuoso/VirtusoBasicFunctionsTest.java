@@ -4,6 +4,8 @@ import junit.framework.Assert;
 
 import org.junit.Test;
 
+import de.dwslab.dwslib.util.uri.LodURI;
+
 public class VirtusoBasicFunctionsTest {
 
 	@Test

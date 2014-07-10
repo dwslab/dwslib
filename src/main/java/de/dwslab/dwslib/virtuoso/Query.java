@@ -3,6 +3,8 @@ package de.dwslab.dwslib.virtuoso;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import de.dwslab.dwslib.util.uri.LodURI;
+
 import java.io.IOException;
 import java.sql.*;
 import java.util.HashMap;

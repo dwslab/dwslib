@@ -1,4 +1,4 @@
-package de.dwslab.dwslib.util;
+package de.dwslab.dwslib.util.uri;
 
 import java.util.HashMap;
 import java.util.logging.Level;

@@ -1,4 +1,4 @@
-package de.dwslab.dwslib.util;
+package de.dwslab.dwslib.models;
 /**
  * Progress counter
  * @author Oliver Lehmberg

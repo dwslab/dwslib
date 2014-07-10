@@ -1,4 +1,4 @@
-package de.dwslab.dwslib.util;
+package de.dwslab.dwslib.util.io;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -9,7 +9,7 @@ import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.util.zip.GZIPOutputStream;
 
-import de.dwslab.dwslib.util.model.OutputType;
+import de.dwslab.dwslib.models.FileCompressionTypes;
 
 /**
  * This class wraps a {@link BufferedWriter} which makes use of an underlying
@@ -28,7 +28,7 @@ public class BufferedChunkingWriter {
 	private int nextChunk;
 	private File outputDir;
 	private File currentOutputFile;
-	private OutputType outputType = OutputType.GZIP;
+	private FileCompressionTypes outputType = FileCompressionTypes.GZIP;
 
 	/**
 	 * Initializes the writer. Please not that at this point no file or writer
@@ -46,7 +46,7 @@ public class BufferedChunkingWriter {
 	 *            the Type of the output files.
 	 */
 	public BufferedChunkingWriter(File outputDir, String nameScheme,
-			int maxFileSize, OutputType type) {
+			int maxFileSize, FileCompressionTypes type) {
 		this.maxFileSize = (long) maxFileSize * 1024 * 1024;
 		this.nameScheme = nameScheme.trim();
 		if (!outputDir.exists()) {
@@ -78,7 +78,7 @@ public class BufferedChunkingWriter {
 	public BufferedChunkingWriter(File outputDir, String nameScheme,
 			int maxFileSize) {
 		this(outputDir, nameScheme, maxFileSize,
-				OutputType.GZIP);
+				FileCompressionTypes.GZIP);
 	}
 
 	/**
@@ -118,13 +118,13 @@ public class BufferedChunkingWriter {
 				e.printStackTrace();
 			}
 		}
-		if (outputType == OutputType.GZIP) {
+		if (outputType == FileCompressionTypes.GZIP) {
 			currentOutputFile = new File(outputDir, nameScheme + "-"
 					+ String.format("%05d", nextChunk++) + ".gz");
 			currentWriter = new BufferedWriter(new OutputStreamWriter(
 					new GZIPOutputStream(
 							new FileOutputStream(currentOutputFile))));
-		} else if (outputType == OutputType.PLAIN) {
+		} else if (outputType == FileCompressionTypes.PLAIN) {
 			currentOutputFile = new File(outputDir, nameScheme + "-"
 					+ String.format("%05d", nextChunk++));
 			currentWriter = new BufferedWriter(

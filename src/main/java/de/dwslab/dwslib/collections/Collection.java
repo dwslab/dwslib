@@ -1,4 +1,4 @@
-package de.dwslab.dwslib;
+package de.dwslab.dwslib.collections;
 
 import java.util.Collections;
 import java.util.Comparator;
