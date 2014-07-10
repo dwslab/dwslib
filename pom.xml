@@ -60,7 +60,7 @@
                     <archive>
                         <manifest>
                             <addClasspath>true</addClasspath>
-                            <mainClass>de.dwslab.dwslib.cli.QueryCLI</mainClass>
+                            <mainClass>de.dwslab.dwslib.cli.Starter</mainClass>
                             <classpathPrefix>lib/</classpathPrefix>
                         </manifest>
                     </archive>
@@ -71,7 +71,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>de.dwslab.dwslib.cli.QueryCLI</mainClass>
+                            <mainClass>de.dwslab.dwslib.cli.Starter</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>
