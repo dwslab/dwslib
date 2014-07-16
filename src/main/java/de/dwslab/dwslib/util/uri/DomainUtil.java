@@ -136,7 +136,7 @@ public class DomainUtil {
 		String domain = getDomain(url);
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			return fullDomainName.topPrivateDomain();
+			return fullDomainName.topPrivateDomain().name();
 		} catch (Exception e) {
 			//log.log(Level.WARNING, "Could not get pld from " + domain + ".");
 		}
