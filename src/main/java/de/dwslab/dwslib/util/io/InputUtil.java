@@ -4,18 +4,34 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.io.SequenceInputStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.zip.GZIPInputStream;
+import java.util.zip.ZipInputStream;
 
+import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+
+/**
+ * This class includes useful functions to get Streams/Readers from files
+ * without taking care of the compression type. Currently ZIP, GZIP and BZ2 are
+ * supported beside plain text files.
+ * 
+ * @author Robert Meusel (robert@informatik.uni-mannheim.de)
+ * 
+ */
 public class InputUtil {
+
+	/**
+	 * Default encoding of the InputUtil.class
+	 */
+	public static String DEFAULT_ENCODING = "utf-8";
 
 	/**
 	 * Returns a list of files, which could be the input file itself (if its a
@@ -98,66 +114,99 @@ public class InputUtil {
 	}
 
 	/**
-	 * Returns the most likely fitting {@link BufferedReader} for a given file.
+	 * Returns the BufferedReader for a given file. Internally
+	 * {@link InputUtil#getBufferedReader(File, String)} is used with the
+	 * {@link InputUtil#DEFAULT_ENCODING}.
 	 * 
 	 * @param File
 	 *            which should be read
-	 * @return {@link BufferedReader}
+	 * @return {@link BufferedReader} for the given File
 	 * @throws IOException
-	 *             If file was not found or Stream could not be opened.
+	 *             If file was not found, is a directory or the stream could not
+	 *             be opened.
 	 */
 	public static BufferedReader getBufferedReader(File f) throws IOException {
-		BufferedReader br;
-		if (f.getName().endsWith("gz")) {
-			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
-					new FileInputStream(f))));
-		} else {
-			br = new BufferedReader(new FileReader(f));
-		}
 
-		return br;
+		return getBufferedReader(f, DEFAULT_ENCODING);
 	}
 
 	/**
-	 * Returns the most likely fitting {@link BufferedReader} for a given file.
+	 * Returns an {@link InputStream} for a given {@link File}. Depending on the
+	 * ending of the file the corresponding {@link InputStream} is chosen.
+	 * Currently the compression types GZIP, ZIP and BZ2 are supported. All
+	 * other files will be read as plain files.
+	 * 
+	 * @param f
+	 *            the {@link File} which should be read.
+	 * @return {@link InputStream} for the given {@link File}
+	 * @throws IOException
+	 *             if the file could not be found, is a directory or is no
+	 *             stream could not be opened.
+	 */
+	public static InputStream getInputStream(File f) throws IOException {
+		InputStream is;
+		if (!f.isFile()) {
+			throw new IOException("Inputfile is not a file but a directory.");
+		}
+		if (f.getName().endsWith(".gz")) {
+			is = new GZIPInputStream(new FileInputStream(f));
+		} else if (f.getName().endsWith(".zip")) {
+			is = new ZipInputStream(new FileInputStream(f));
+		} else if (f.getName().endsWith(".bz2")) {
+			is = new BZip2CompressorInputStream(new FileInputStream(f));
+		} else {
+			is = new FileInputStream(f);
+		}
+		return is;
+	}
+
+	/**
+	 * Returns a {@link BufferedReader} for a given {@link File}. Depending on
+	 * the compression of the file, the corresponding {@link InputStream} is
+	 * used. Internally {@link InputUtil#getInputStream(File)} is used.
 	 * 
 	 * @param File
 	 *            which should be read
 	 * @param encoding
-	 *            the encoding to be used
-	 * @return {@link BufferedReader}
+	 *            the encoding to be used, if NULL the
+	 *            {@link InputUtil#DEFAULT_ENCODING} is used.s
+	 * @return {@link BufferedReader} for the given file
 	 * @throws IOException
-	 *             If file was not found or Stream could not be opened.
+	 *             if the file could not be found, is a directory or is no
+	 *             stream could not be opened.
 	 */
 	public static BufferedReader getBufferedReader(File f, String encoding)
 			throws IOException {
-		BufferedReader br;
-		if (f.getName().endsWith("gz")) {
-			br = new BufferedReader(new InputStreamReader(new GZIPInputStream(
-					new FileInputStream(f)), encoding));
-		} else {
-			br = new BufferedReader(new InputStreamReader(
-					new FileInputStream(f), encoding));
+		if (encoding == null) {
+			encoding = DEFAULT_ENCODING;
 		}
-
-		return br;
+		return new BufferedReader(new InputStreamReader(getInputStream(f),
+				encoding));
 	}
 
+	/**
+	 * Returns a {@link BufferedReader} for a {@link Collection} of {@link File}
+	 * s. Each file is opened using an {@link InputStream} obtained internally
+	 * from {@link InputUtil#getInputStream(File)} which are all combined using
+	 * a {@link SequenceInputStream} packed into a {@link BufferedReader}.
+	 * Please note, that the streams in the single {@link Reader} do not
+	 * necessary need to be sorted.
+	 * 
+	 * @param files
+	 *            {@link Collection} of {@link File}s which should be read using
+	 *            one {@link BufferedReader}.
+	 * @return {@link BufferedReader} combining {@link InputStream} from all
+	 *         {@link File}s in the {@link Collection}
+	 * @throws IOException
+	 *             if for any given file the file could not be found, the file
+	 *             is a directory or the stream could not be opend.
+	 */
 	public static BufferedReader getBufferedReader(Collection<File> files)
 			throws IOException {
 		List<InputStream> streamsToProcess = new ArrayList<InputStream>(
 				files.size());
 		for (File f : files) {
-			// distinguish inflated and deflated input files
-			if (f.getName().endsWith(".gz")) {
-				// always add a the last position
-				streamsToProcess.add(streamsToProcess.size(),
-						new GZIPInputStream(new FileInputStream(f)));
-			} else {
-				// always add a the last position
-				streamsToProcess.add(streamsToProcess.size(),
-						new FileInputStream(f));
-			}
+			streamsToProcess.add(getInputStream(f));
 		}
 		return new BufferedReader(new InputStreamReader(
 				new SequenceInputStream(
