@@ -12,6 +12,7 @@ import com.google.common.net.InternetDomainName;
 
 public class DomainUtil {
 
+
 	/**
 	 * URL which is returned if domain could not be extracted
 	 */
@@ -91,10 +92,10 @@ public class DomainUtil {
 		String domain = getDomain(url);
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			if (fullDomainName.name().startsWith("www.")) {
-				return fullDomainName.name().replaceFirst("www.", "");
+			if (fullDomainName.toString().startsWith("www.")) {
+				return fullDomainName.toString().replaceFirst("www.", "");
 			} else {
-				return fullDomainName.name();
+				return fullDomainName.toString();
 			}
 		} catch (Exception e) {
 			// log.log(Level.WARNING, "Could not get subdomain from " + domain +
@@ -107,8 +108,8 @@ public class DomainUtil {
 		String domain = getDomain(url);
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			String pld = fullDomainName.topPrivateDomain().name();
-			String firstSubDomain = fullDomainName.name().replace(pld, "");
+			String pld = fullDomainName.topPrivateDomain().toString();
+			String firstSubDomain = fullDomainName.toString().replace(pld, "");
 			if (firstSubDomain.startsWith("www.")) {
 				firstSubDomain = firstSubDomain.replaceFirst("www.", "");
 			}
@@ -135,7 +136,7 @@ public class DomainUtil {
 	public static String getPayLevelDomain(String domain) {
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			return fullDomainName.topPrivateDomain().name();
+			return fullDomainName.topPrivateDomain().toString();
 		} catch (Exception e) {
 			log.log(Level.WARNING, e.getMessage(), e);
 		}
@@ -146,7 +147,7 @@ public class DomainUtil {
 		String domain = getDomain(url);
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			return fullDomainName.topPrivateDomain().name();
+			return fullDomainName.topPrivateDomain().toString();
 		} catch (Exception e) {
 			// log.log(Level.WARNING, "Could not get pld from " + domain + ".");
 		}
@@ -172,7 +173,7 @@ public class DomainUtil {
 		String domain = getDomain(url);
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			return fullDomainName.publicSuffix().name();
+			return fullDomainName.publicSuffix().toString();
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Could not get tld from " + domain + ".");
 		}
@@ -182,7 +183,7 @@ public class DomainUtil {
 	public static String getTopLevelDomain(String domain) {
 		try {
 			InternetDomainName fullDomainName = InternetDomainName.from(domain);
-			return fullDomainName.publicSuffix().name();
+			return fullDomainName.publicSuffix().toString();
 		} catch (Exception e) {
 			log.log(Level.WARNING, domain, e);
 		}
