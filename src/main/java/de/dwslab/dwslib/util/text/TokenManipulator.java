@@ -49,7 +49,7 @@ public class TokenManipulator {
 		 Collection<List<String>> res = Collections2.permutations(list);
 		 List<String> output = new ArrayList<String>(res.size());
 		 for (List<String> l : res)
-			 output.add(StringBuilder.combine(l, " ").toString());
+			 output.add(StringManipulator.combine(l, " ").toString());
 		 return output;
 	}
 	
@@ -73,7 +73,7 @@ public class TokenManipulator {
 		for (int win = token.length; win > 0; win--) {
 			for (int offset = 0; offset <= token.length-win; offset++) {
 				String[] window = Arrays.copyOfRange(token, offset, offset+win);
-				String str = StringBuilder.combine(window, tokenSeparator).toString();
+				String str = StringManipulator.combine(window, tokenSeparator).toString();
 				windows.add(str);
 			}
 		}

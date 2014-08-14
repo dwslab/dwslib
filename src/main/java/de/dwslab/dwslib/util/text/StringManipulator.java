@@ -7,7 +7,7 @@ import java.util.List;
  * @author Michael Schuhmacher
  *
  */
-public class StringBuilder {
+public class StringManipulator {
 	
 	/**
 	 * 
