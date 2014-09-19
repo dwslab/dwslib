@@ -17,6 +17,7 @@ import java.util.zip.GZIPInputStream;
 import java.util.zip.ZipInputStream;
 
 import org.apache.commons.compress.compressors.bzip2.BZip2CompressorInputStream;
+import org.tukaani.xz.XZInputStream;
 
 /**
  * This class includes useful functions to get Streams/Readers from files
@@ -154,6 +155,8 @@ public class InputUtil {
 			is = new ZipInputStream(new FileInputStream(f));
 		} else if (f.getName().endsWith(".bz2")) {
 			is = new BZip2CompressorInputStream(new FileInputStream(f));
+		} else if (f.getName().endsWith(".xz")) {
+			is = new XZInputStream(new FileInputStream(f));
 		} else {
 			is = new FileInputStream(f);
 		}
