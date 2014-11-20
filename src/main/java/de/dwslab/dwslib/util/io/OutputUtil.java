@@ -1,11 +1,38 @@
 package de.dwslab.dwslib.util.io;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.util.zip.GZIPOutputStream;
+
 /**
  * This class includes useful functions to produce output.
+ * 
  * @author Robert
- *
+ * 
  */
 public class OutputUtil {
+
+	/**
+	 * Returns a {@link BufferedWriter} based on an underlying
+	 * {@link GZIPOutputStream} for a given {@link File}.
+	 * 
+	 * @param f
+	 *            {@link File} which should be written to.
+	 * @return {@link BufferedWriter}
+	 * @throws FileNotFoundException
+	 *             , if the file does not exists.
+	 * @throws IOException
+	 *             , if the file cannot be opened for writing.
+	 */
+	public static BufferedWriter getGZIPBufferedWriter(File f)
+			throws FileNotFoundException, IOException {
+		return new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
+				new FileOutputStream(f))));
+	}
 
 	public static void printLogo() {
 		System.out.println(LOGO);
