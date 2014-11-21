@@ -77,8 +77,7 @@ public class BufferedChunkingWriter {
 	 */
 	public BufferedChunkingWriter(File outputDir, String nameScheme,
 			int maxFileSize) {
-		this(outputDir, nameScheme, maxFileSize,
-				FileCompressionTypes.GZIP);
+		this(outputDir, nameScheme, maxFileSize, FileCompressionTypes.GZIP);
 	}
 
 	/**
@@ -102,7 +101,8 @@ public class BufferedChunkingWriter {
 	 * @throws IOException
 	 *             If the old stream could not be closed.
 	 */
-	public void write(String input) throws FileNotFoundException, IOException {
+	public synchronized void write(String input) throws FileNotFoundException,
+			IOException {
 		if (currentOutputFile == null
 				|| currentOutputFile.length() > maxFileSize) {
 			switchChunk();
