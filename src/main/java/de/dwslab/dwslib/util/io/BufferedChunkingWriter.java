@@ -87,7 +87,9 @@ public class BufferedChunkingWriter {
 	 *             when something goes wrong.
 	 */
 	public void close() throws IOException {
-		currentWriter.close();
+		if (currentWriter != null) {
+			currentWriter.close();
+		}
 	}
 
 	/**
