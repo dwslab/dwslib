@@ -22,13 +22,12 @@ import org.jets3t.service.model.S3Object;
 import org.jets3t.service.security.AWSCredentials;
 
 public class S3Helper {
-	
+
 	private RestS3Service s3;
 	private AWSCredentials awsCreds;
 	protected static Logger log;
-	
-	public S3Helper(String accessKey, String secretKey)
-	{
+
+	public S3Helper(String accessKey, String secretKey) {
 		try {
 			log = Logger.getLogger(getClass().getEnclosingClass()
 					.getSimpleName());
@@ -36,29 +35,25 @@ public class S3Helper {
 			log = Logger.getLogger("S3Helper.java");
 			log.log(Level.WARNING, "Could not obtain class name");
 		}
-		
+
 		awsCreds = new AWSCredentials(accessKey, secretKey);
 	}
-	
+
 	protected RestS3Service getStorage() {
 		if (s3 == null) {
-			try {
-				s3 = new RestS3Service(awsCreds);
-			} catch (S3ServiceException e1) {
-				log.log(Level.SEVERE, new Date() + "Unable to connect to S3!");
-				log.log(Level.SEVERE, e1.getMessage());
-			}
+
+			s3 = new RestS3Service(awsCreds);
+
 		}
 		return s3;
 	}
-	
-	public void setRequestPaysEnabled(boolean enabled)
-	{
+
+	public void setRequestPaysEnabled(boolean enabled) {
 		getStorage().setRequesterPaysEnabled(enabled);
 	}
-	
-	public void SaveFileToS3(String localFile, String S3FileKey,
-			String S3Bucket) throws S3ServiceException, IOException {
+
+	public void SaveFileToS3(String localFile, String S3FileKey, String S3Bucket)
+			throws S3ServiceException, IOException {
 		S3Object dataFileObject = new S3Object(localFile);
 		dataFileObject.setKey(S3FileKey);
 		dataFileObject.setDataInputFile(new File(localFile));
@@ -66,23 +61,26 @@ public class S3Helper {
 			getStorage().putObject(S3Bucket, dataFileObject);
 			dataFileObject.closeDataInputStream();
 		} catch (S3ServiceException e) {
-			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
+			log.log(Level.WARNING, new Date() + "Error saving output to S3: "
+					+ localFile);
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		} catch (IOException e) {
-			log.log(Level.WARNING, new Date() + "Error saving output to S3: " + localFile);
+			log.log(Level.WARNING, new Date() + "Error saving output to S3: "
+					+ localFile);
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		}
 	}
-	
-	public List<String> ListBucketContents(String S3BucketName, String prefix) throws S3ServiceException
-	{
-		ArrayList<String> objects = new ArrayList<String>();;
-		
+
+	public List<String> ListBucketContents(String S3BucketName, String prefix)
+			throws S3ServiceException {
+		ArrayList<String> objects = new ArrayList<String>();
+		;
+
 		try {
-			for(S3Object obj : getStorage().listObjects(S3BucketName, prefix, null))
-			{
+			for (S3Object obj : getStorage().listObjects(S3BucketName, prefix,
+					null)) {
 				objects.add(obj.getKey());
 			}
 		} catch (S3ServiceException e) {
@@ -90,17 +88,18 @@ public class S3Helper {
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		}
-		
+
 		return objects;
 	}
-	
-	public List<S3File> ListBucketFiles(String S3BucketName, String prefix) throws S3ServiceException
-	{
-		ArrayList<S3File> objects = new ArrayList<S3File>();;
-		
+
+	public List<S3File> ListBucketFiles(String S3BucketName, String prefix)
+			throws S3ServiceException {
+		ArrayList<S3File> objects = new ArrayList<S3File>();
+		;
+
 		try {
-			for(S3Object obj : getStorage().listObjects(S3BucketName, prefix, null))
-			{
+			for (S3Object obj : getStorage().listObjects(S3BucketName, prefix,
+					null)) {
 				objects.add(new S3File(S3BucketName, obj.getKey()));
 			}
 		} catch (S3ServiceException e) {
@@ -108,19 +107,18 @@ public class S3Helper {
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		}
-		
+
 		return objects;
 	}
-	
-	public void SetAcl(String S3FileKey,
-			String S3Bucket, S3Permission perm) throws ServiceException
-	{
+
+	public void SetAcl(String S3FileKey, String S3Bucket, S3Permission perm)
+			throws ServiceException {
 		try {
-			AccessControlList acl = getStorage().getObjectAcl(S3Bucket, S3FileKey);
-			
+			AccessControlList acl = getStorage().getObjectAcl(S3Bucket,
+					S3FileKey);
+
 			GroupGrantee grantee = null;
-			switch(perm.getGrantee())
-			{
+			switch (perm.getGrantee()) {
 			case All:
 				grantee = GroupGrantee.ALL_USERS;
 				break;
@@ -131,10 +129,9 @@ public class S3Helper {
 				grantee = GroupGrantee.LOG_DELIVERY;
 				break;
 			}
-			
+
 			Permission p = null;
-			switch(perm.getPermission())
-			{
+			switch (perm.getPermission()) {
 			case Read:
 				p = Permission.PERMISSION_READ;
 				break;
@@ -145,9 +142,9 @@ public class S3Helper {
 				p = Permission.PERMISSION_FULL_CONTROL;
 				break;
 			}
-			
+
 			acl.grantPermission(grantee, p);
-			
+
 			getStorage().putObjectAcl(S3Bucket, S3FileKey, acl);
 		} catch (S3ServiceException e) {
 			log.log(Level.WARNING, new Date() + "Error setting permissions");
@@ -159,7 +156,7 @@ public class S3Helper {
 			throw e;
 		}
 	}
-	
+
 	public void LoadFileFromS3(String localFile, String S3FileKey,
 			String S3Bucket) throws IOException, ServiceException {
 		File file = new File(localFile);
@@ -170,17 +167,18 @@ public class S3Helper {
 			storeStreamToFile(inputObject.getDataInputStream(), file);
 			inputObject.closeDataInputStream();
 		} catch (IOException e) {
-			log.log(Level.WARNING, new Date() + "Unable to save local file: " + localFile);
+			log.log(Level.WARNING, new Date() + "Unable to save local file: "
+					+ localFile);
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		} catch (ServiceException e) {
-			log.log(Level.WARNING, new Date() + "Unable to load file from S3: " + S3Bucket + "/"
-					+ S3FileKey);
+			log.log(Level.WARNING, new Date() + "Unable to load file from S3: "
+					+ S3Bucket + "/" + S3FileKey);
 			log.log(Level.WARNING, e.getMessage());
 			throw e;
 		}
 	}
-	
+
 	protected void storeStreamToFile(InputStream in, File outFile)
 			throws IOException {
 		OutputStream out = new FileOutputStream(outFile);

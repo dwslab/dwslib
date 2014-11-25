@@ -109,6 +109,7 @@ public class ParallelS3 {
 				processor = new ParallelS3Downloader(numThreads, cred, target,
 						localFolder, overwriteExisting, requesterpays);
 			}
+
 			/*
 			 * else if(cmd.getArgs()[0].equals("get")) {
 			 * 

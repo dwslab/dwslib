@@ -202,8 +202,8 @@ public abstract class Processor<E> {
 				p.process(object);
 			} catch (Exception e) {
 				log.log(Level.WARNING, new Date()
-						+ " Worker-task failed for the " + numberOfMaxFails
-						+ ": " + e.getMessage());
+						+ " Worker-task failed for the " + numberOfFails + ": "
+						+ e.getMessage());
 				e.printStackTrace();
 				if (numberOfFails++ < numberOfMaxFails) {
 					requeue();
