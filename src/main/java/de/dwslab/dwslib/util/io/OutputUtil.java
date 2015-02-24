@@ -18,7 +18,8 @@ public class OutputUtil {
 
 	/**
 	 * Returns a {@link BufferedWriter} based on an underlying
-	 * {@link GZIPOutputStream} for a given {@link File}.
+	 * {@link GZIPOutputStream} for a given {@link File} using UTF-8 encoding.
+	 * For different encodings use {@link #getGZIPBufferedWriter(File, String)}.
 	 * 
 	 * @param f
 	 *            {@link File} which should be written to.
@@ -31,7 +32,27 @@ public class OutputUtil {
 	public static BufferedWriter getGZIPBufferedWriter(File f)
 			throws FileNotFoundException, IOException {
 		return new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
-				new FileOutputStream(f))));
+				new FileOutputStream(f)), "UTF-8"));
+	}
+
+	/**
+	 * Returns a {@link BufferedWriter} based on an underlying
+	 * {@link GZIPOutputStream} for a given {@link File}.
+	 * 
+	 * @param f
+	 *            {@link File} which should be written to.
+	 * @param encoding
+	 *            set the encoding
+	 * @return {@link BufferedWriter}
+	 * @throws FileNotFoundException
+	 *             , if the file does not exists.
+	 * @throws IOException
+	 *             , if the file cannot be opened for writing.
+	 */
+	public static BufferedWriter getGZIPBufferedWriter(File f, String encoding)
+			throws FileNotFoundException, IOException {
+		return new BufferedWriter(new OutputStreamWriter(new GZIPOutputStream(
+				new FileOutputStream(f)), encoding));
 	}
 
 	public static void printLogo() {
