@@ -125,7 +125,7 @@ public class BufferedChunkingWriter {
 					+ String.format("%05d", nextChunk++) + ".gz");
 			currentWriter = new BufferedWriter(new OutputStreamWriter(
 					new GZIPOutputStream(
-							new FileOutputStream(currentOutputFile))));
+							new FileOutputStream(currentOutputFile)), "UTF-8"));
 		} else if (outputType == FileCompressionTypes.PLAIN) {
 			currentOutputFile = new File(outputDir, nameScheme + "-"
 					+ String.format("%05d", nextChunk++));
