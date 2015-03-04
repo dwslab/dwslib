@@ -80,11 +80,14 @@ public class SplitGZIPFile {
 			while ((line = reader.readLine()) != null) {
 				if (writer == null) {
 					writer = new BufferedWriter(new OutputStreamWriter(
-							new GZIPOutputStream(new FileOutputStream(
-									outputDir.getAbsolutePath()
-											+ File.separator + prefix
-											+ fileCounter + fileExtension)),
-							"UTF-8"));
+							new GZIPOutputStream(
+									new FileOutputStream(
+											outputDir.getAbsolutePath()
+													+ File.separator
+													+ prefix
+													+ String.format("%03d",
+															fileCounter)
+													+ fileExtension)), "UTF-8"));
 					fileCounter++;
 					curNumOfLines = 0;
 				}
