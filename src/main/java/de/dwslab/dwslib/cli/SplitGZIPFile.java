@@ -77,29 +77,34 @@ public class SplitGZIPFile {
 		for (File f : files) {
 			BufferedReader reader = InputUtil.getBufferedReader(f, "UTF-8");
 
-			while ((line = reader.readLine()) != null) {
-				if (writer == null) {
-					writer = new BufferedWriter(new OutputStreamWriter(
-							new GZIPOutputStream(
-									new FileOutputStream(
-											outputDir.getAbsolutePath()
-													+ File.separator
-													+ prefix
-													+ String.format("%03d",
-															fileCounter)
-													+ fileExtension)), "UTF-8"));
-					fileCounter++;
-					curNumOfLines = 0;
+			try {
+				while ((line = reader.readLine()) != null) {
+					if (writer == null) {
+						writer = new BufferedWriter(new OutputStreamWriter(
+								new GZIPOutputStream(new FileOutputStream(
+										outputDir.getAbsolutePath()
+												+ File.separator
+												+ prefix
+												+ String.format("%03d",
+														fileCounter)
+												+ fileExtension)), "UTF-8"));
+						fileCounter++;
+						curNumOfLines = 0;
+					}
+
+					writer.write(line);
+					writer.newLine();
+					curNumOfLines++;
+
+					if (curNumOfLines == numberOfLines) {
+						writer.close();
+						writer = null;
+					}
 				}
 
-				writer.write(line);
-				writer.newLine();
-				curNumOfLines++;
-
-				if (curNumOfLines == numberOfLines) {
-					writer.close();
-					writer = null;
-				}
+			} catch (Exception e) {
+				System.out.println("Could not finish parsing file "
+						+ f.getName() + ": " + e.getMessage());
 			}
 		}
 
