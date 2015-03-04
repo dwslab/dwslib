@@ -106,6 +106,11 @@ public class SplitGZIPFile {
 				System.out.println("Could not finish parsing file "
 						+ f.getName() + ": " + e.getMessage());
 			}
+			try {
+				reader.close();
+			} catch (IOException ioe) {
+
+			}
 		}
 
 		if (writer != null) {
