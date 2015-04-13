@@ -77,6 +77,7 @@ public abstract class Processor<E> {
 	 */
 	private long printState(ThreadPoolExecutor executor, long startTime) {
 		long total = executor.getTaskCount();
+		
 		long finished = executor.getCompletedTaskCount();
 		long runtime = (System.currentTimeMillis() - startTime);
 		long perItem = (long) (((float) runtime) / finished);
