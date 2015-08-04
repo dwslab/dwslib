@@ -37,6 +37,10 @@ If your are not using Maven for managing dependencies, just grab it from
 
 Versioning of the dwslib is done according to the Semantic Versioning guidelines (http://semver.org/). This means that it is safe to include new releases which only changed in the MINOR and PATCH component without modifying your code. However, new major versions are allowed to break backward compatibility.
 
+## Licence
+
+<a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-nc/4.0/88x31.png" /></a><br /><span xmlns:dct="http://purl.org/dc/terms/" property="dct:title">dwslib</span> is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-nc/4.0/">Creative Commons Attribution-NonCommercial 4.0 International License</a>.
+
 ## Content
 
 
