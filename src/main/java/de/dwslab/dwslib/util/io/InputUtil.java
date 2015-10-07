@@ -21,8 +21,8 @@ import org.apache.commons.compress.compressors.xz.XZCompressorInputStream;
 
 /**
  * This class includes useful functions to get Streams/Readers from files
- * without taking care of the compression type. Currently ZIP, GZIP, XZ and BZ2 are
- * supported beside plain text files.
+ * without taking care of the compression type. Currently ZIP, GZIP, XZ and BZ2
+ * are supported beside plain text files.
  * 
  * @author Robert Meusel (robert@informatik.uni-mannheim.de)
  * 
@@ -155,6 +155,8 @@ public class InputUtil {
 			is = new ZipInputStream(new FileInputStream(f));
 		} else if (f.getName().endsWith(".bz2")) {
 			is = new BZip2CompressorInputStream(new FileInputStream(f));
+			// this is necessary to get the next entry
+			((ZipInputStream) is).getNextEntry();
 		} else if (f.getName().endsWith(".xz")) {
 			is = new XZCompressorInputStream(new FileInputStream(f));
 		} else {
