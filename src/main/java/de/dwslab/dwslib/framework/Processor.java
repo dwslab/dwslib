@@ -103,8 +103,10 @@ public abstract class Processor<E> {
 						+ " / item"
 						+ ", Finished in: "
 						+ (left == -1 ? "..." : DurationFormatUtils
-								.formatDuration(left, "HH:mm:ss.S")) + " (approx. "
-						+ new Date(System.currentTimeMillis() + left) + ")");
+								.formatDuration(left, "HH:mm:ss.S")
+								+ " (approx. "
+								+ new Date(System.currentTimeMillis() + left)
+								+ ")"));
 
 		return total - finished;
 	}
