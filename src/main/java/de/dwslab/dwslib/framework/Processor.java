@@ -77,7 +77,7 @@ public abstract class Processor<E> {
 	 */
 	private long printState(ThreadPoolExecutor executor, long startTime) {
 		long total = executor.getTaskCount();
-		
+
 		long finished = executor.getCompletedTaskCount();
 		long runtime = (System.currentTimeMillis() - startTime);
 		long perItem = (long) (((float) runtime) / finished);
@@ -103,7 +103,8 @@ public abstract class Processor<E> {
 						+ " / item"
 						+ ", Finished in: "
 						+ (left == -1 ? "..." : DurationFormatUtils
-								.formatDuration(left, "HH:mm:ss.S")));
+								.formatDuration(left, "HH:mm:ss.S")) + " (approx. "
+						+ new Date(System.currentTimeMillis() + left) + ")");
 
 		return total - finished;
 	}
