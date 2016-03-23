@@ -48,19 +48,42 @@ public abstract class Processor<E> {
 	 */
 	public Processor(int threads) {
 		if (threads < 1) {
-			System.out
-					.println("Number of threads will be set to number of avaible processors.");
+			System.out.println("Number of threads will be set to number of avaible processors.");
 			this.threads = Runtime.getRuntime().availableProcessors();
 		} else {
 			this.threads = threads;
 		}
 		try {
-			log = Logger.getLogger(getClass().getEnclosingClass()
-					.getSimpleName());
+			log = Logger.getLogger(getClass().getEnclosingClass().getSimpleName());
 		} catch (NullPointerException ne) {
 			log = Logger.getLogger("Processor.java");
 			log.log(Level.WARNING, "Could not obtain class name");
 		}
+	}
+
+	/**
+	 * Constructor with initially the number of threads which is equal to the
+	 * number of available processors.
+	 * 
+	 */
+	public Processor() {
+		this.threads = Runtime.getRuntime().availableProcessors();
+		try {
+			log = Logger.getLogger(getClass().getEnclosingClass().getSimpleName());
+		} catch (NullPointerException ne) {
+			log = Logger.getLogger("Processor.java");
+			log.log(Level.WARNING, "Could not obtain class name");
+		}
+	}
+
+	/**
+	 * Overwrite this method whenever you need to get the number of threads from
+	 * outside. Or reset them later.
+	 * 
+	 * @return number of threads
+	 */
+	protected int getNumberOfThreads() {
+		return threads;
 	}
 
 	/**
@@ -89,24 +112,13 @@ public abstract class Processor<E> {
 		}
 
 		log.log(Level.INFO,
-				new Date()
-						+ " Runtime: "
-						+ DurationFormatUtils.formatDuration(runtime,
-								"HH:mm:ss.S")
-						+ " --> Total: "
-						+ total
-						+ ", Done: "
-						+ finished
-						+ ", "
-						+ (perItem == -1 ? "..." : DurationFormatUtils
-								.formatDuration(perItem, "HH:mm:ss.S"))
-						+ " / item"
-						+ ", Finished in: "
-						+ (left == -1 ? "..." : DurationFormatUtils
-								.formatDuration(left, "HH:mm:ss.S")
-								+ " (approx. "
-								+ new Date(System.currentTimeMillis() + left)
-								+ ")"));
+				new Date() + " Runtime: " + DurationFormatUtils.formatDuration(runtime, "HH:mm:ss.S") + " --> Total: "
+						+ total + ", Done: " + finished + ", "
+						+ (perItem == -1 ? "..." : DurationFormatUtils.formatDuration(perItem, "HH:mm:ss.S"))
+						+ " / item" + ", Finished in: "
+						+ (left == -1 ? "..."
+								: DurationFormatUtils.formatDuration(left, "HH:mm:ss.S") + " (approx. "
+										+ new Date(System.currentTimeMillis() + left) + ")"));
 
 		return total - finished;
 	}
@@ -143,8 +155,7 @@ public abstract class Processor<E> {
 
 		beforeProcess();
 
-		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors
-				.newFixedThreadPool(threads);
+		ThreadPoolExecutor executor = (ThreadPoolExecutor) Executors.newFixedThreadPool(getNumberOfThreads());
 
 		long l = System.currentTimeMillis();
 		for (E object : objectToProcess) {
@@ -205,9 +216,8 @@ public abstract class Processor<E> {
 			try {
 				p.process(object);
 			} catch (Exception e) {
-				log.log(Level.WARNING, new Date()
-						+ " Worker-task failed for the " + numberOfFails + ": "
-						+ e.getMessage());
+				log.log(Level.WARNING,
+						new Date() + " Worker-task failed for the " + numberOfFails + ": " + e.getMessage());
 				e.printStackTrace();
 				if (numberOfFails++ < numberOfMaxFails) {
 					requeue();
@@ -220,8 +230,7 @@ public abstract class Processor<E> {
 		 * {@link Processor#numberOfMaxFails}
 		 */
 		private void requeue() {
-			log.log(Level.INFO,
-					new Date() + " requeue worker for " + object.toString());
+			log.log(Level.INFO, new Date() + " requeue worker for " + object.toString());
 			executor.submit(this);
 		}
 
