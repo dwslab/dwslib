@@ -54,7 +54,7 @@ public abstract class Processor<E> {
 			this.threads = threads;
 		}
 		try {
-			log = Logger.getLogger(getClass().getEnclosingClass().getSimpleName());
+			log = Logger.getLogger(getClass().getSimpleName());
 		} catch (NullPointerException ne) {
 			log = Logger.getLogger("Processor.java");
 			log.log(Level.WARNING, "Could not obtain class name");
