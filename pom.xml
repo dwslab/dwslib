@@ -51,7 +51,7 @@
 							<goal>jar</goal>
 						</goals>
 						<configuration>
-							<additionalparam>-Xdoclint:none</additionalparam>
+							<doclint>none</doclint>
 						</configuration>
 					</execution>
 				</executions>
@@ -101,24 +101,6 @@
 			</plugin>
 		</plugins>
 	</build>
-	<repositories>
-		<repository>
-			<id>lski</id>
-			<url>https://breda.informatik.uni-mannheim.de/nexus/content/groups/public/</url>
-		</repository>
-	</repositories>
-	<distributionManagement>
-		<repository>
-			<name>LSKI Releases Repository</name>
-			<id>lski-releases</id>
-			<url>https://breda.informatik.uni-mannheim.de/nexus/content/repositories/releases</url>
-		</repository>
-		<snapshotRepository>
-			<name>LSKI Snapshot Repository</name>
-			<id>lski-snapshots</id>
-			<url>https://breda.informatik.uni-mannheim.de/nexus/content/repositories/snapshots</url>
-		</snapshotRepository>
-	</distributionManagement>
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
@@ -132,11 +114,6 @@
 			<groupId>org.slf4j</groupId>
 			<artifactId>slf4j-api</artifactId>
 			<version>1.7.4</version>
-		</dependency>
-		<dependency>
-			<groupId>com.openlinksw.virtuoso</groupId>
-			<artifactId>virtjdbc4</artifactId>
-			<version>6.4</version>
 		</dependency>
 		<dependency>
 			<groupId>net.sf.opencsv</groupId>

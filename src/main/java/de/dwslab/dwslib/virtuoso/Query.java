@@ -62,10 +62,10 @@ public class Query {
      */
     public Query(String server, String user, String password, boolean shorten, String charset) throws SQLException {
         this.shortener = shorten ? new URIShortener.LODShortener() : new URIShortener.DummyShortener();
-        DriverManager.registerDriver(new virtuoso.jdbc4.Driver());
+        String url = "jdbc:virtuoso://localhost:1111";
         this.conn = DriverManager
                 .getConnection(
-                        String.format("jdbc:virtuoso://%s/UID=%s/PWD=%s/charset=%s/", server, user, password, charset));
+                        String.format(url+"//%s/UID=%s/PWD=%s/charset=%s/", server, user, password, charset));
     }
 
     /**
@@ -81,8 +81,9 @@ public class Query {
      */
     public Query(String jdbcUri, boolean shorten) throws SQLException {
         this.shortener = shorten ? new URIShortener.LODShortener() : new URIShortener.DummyShortener();
-        DriverManager.registerDriver(new virtuoso.jdbc4.Driver());
-        this.conn = DriverManager.getConnection(jdbcUri);
+        String url = "jdbc:virtuoso://localhost:1111";
+
+        this.conn = DriverManager.getConnection(url);
     }
 
     /**
