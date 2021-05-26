@@ -6,7 +6,15 @@
 	<version>2.0.0-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>dwslib - DWS Java Library</name>
+	<description>Support library of running the yearly Web Data Commons - Microdata, RDFa, JSON-LD, and Microformat Data Sets extraction. The Web Data Commons project is maintained by the Data and Web Science team of the university of Mannheim, Germany. </description>
+	<url>https://github.com/dwslab/dwslib</url>
 
+	<licenses>
+		<license>
+			<name>Apache License, Version 2.0</name>
+			<url>http://www.apache.org/licenses/LICENSE-2.0.txt</url>
+		</license>
+	</licenses>
 	<scm>
 		<connection>scm:git:git://github.com/dwslab/dwslib.git</connection>
 		<developerConnection>scm:git:git@github.com:dwslab/dwslib.git</developerConnection>
