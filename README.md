@@ -12,28 +12,14 @@ If you use Maven for building your project, just add
 
 ```
 <dependency>
-  <groupId>de.dwslab</groupId>
+  <groupId>de.uni-mannheim.informatik.dws.dwslab</groupId>
   <artifactId>dwslib</artifactId>
-  <version>2.0.0-SNAPSHOT</version>
+  <version>2.0.0</version>
 </dependency>
 ```
 
-to your pom.xml. Remember that your project has to be configured for using the DWS Maven repository. This
-is done by adding
+to your pom.xml. 
 
-```
-<repositories>
-  <repository>
-    <id>dws-public</id>
-    <url>https://breda.informatik.uni-mannheim.de/nexus/content/groups/public/</url>
-  </repository>
-</repositories>
-```
-
-to the respective POM.
-
-If your are not using Maven for managing dependencies, just grab it from
-[this page](https://breda.informatik.uni-mannheim.de/nexus/index.html#nexus-search;gav~de.dwslab~dwslib~~~) and include it in your project's dependencies. Older releases before migration to the dwslab.de domain are available using from [this page](https://breda.informatik.uni-mannheim.de/nexus/index.html#nexus-search;gav~de.uni_mannheim.informatik.dws~dwslib~~~).
 
 Versioning of the dwslib is done according to the Semantic Versioning guidelines (http://semver.org/). This means that it is safe to include new releases which only changed in the MINOR and PATCH component without modifying your code. However, new major versions are allowed to break backward compatibility.
 
