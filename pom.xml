@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>de.uni-mannheim.informatik.dws.dwslab</groupId>
 	<artifactId>dwslib</artifactId>
-	<version>2.0.0</version>
+	<version>2.0.1-SNAPSHOT</version>
 	<packaging>jar</packaging>
 	<name>dwslib - DWS Java Library</name>
 	<description>Support library of running the yearly Web Data Commons - Microdata, RDFa, JSON-LD, and Microformat Data Sets extraction. The Web Data Commons project is maintained by the Data and Web Science team of the university of Mannheim, Germany. </description>
@@ -19,7 +19,7 @@
 		<connection>scm:git:git://github.com/dwslab/dwslib.git</connection>
 		<developerConnection>scm:git:git@github.com:dwslab/dwslib.git</developerConnection>
 		<url>https://github.com/dwslab/dwslib</url>
-		<tag>dwslib-2.0.0</tag>
+		<tag>HEAD</tag>
 	</scm>
 	<developers>
 		<developer>
